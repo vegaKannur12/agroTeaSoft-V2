@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tsupply/COMPONENTS/custom_snackbar.dart';
 import 'package:tsupply/CONTROLLER/controller.dart';
 import 'package:tsupply/DB-HELPER/dbhelp.dart';
 import 'package:tsupply/SCREENS/NEXT%20PAGES/damageNremark.dart';
@@ -77,28 +78,16 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 174, 195, 233),
-          title: Consumer<Controller>(
-            builder: (BuildContext context, Controller value, Widget? child) =>
-                Text(
-              value.tSeries.toString(),
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 182, 84, 84)),
-            ),
-          ),
+          // title: Consumer<Controller>(
+          //   builder: (BuildContext context, Controller value, Widget? child) =>
+          //       Text(
+          //     value.tSeries.toString(),
+          //     style: TextStyle(
+          //         fontWeight: FontWeight.bold,
+          //         color: Color.fromARGB(255, 182, 84, 84)),
+          //   ),
+          // ),
           actions: [
-            IconButton(
-              onPressed: () async {
-                List<Map<String, dynamic>> list =
-                    await TeaDB.instance.getListOfTables();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TableList(list: list)),
-                );
-              },
-              icon: Icon(Icons.table_bar),
-            ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Text(
@@ -119,30 +108,42 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: size.height * 0.04,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Add Advance",
-                              style: TextStyle(
-                                color: Colors.purple,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                        Container(
+                          color: Color.fromARGB(255, 174, 195, 233),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: size.height * 0.04,
                               ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Divider(
-                            thickness: 2,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "ADD ADVANCE",
+                                    style: TextStyle(
+                                      color: Colors.purple,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 20, top: 10),
+                                child: Divider(
+                                  thickness: 2,
+                                  color: Color.fromARGB(255, 185, 183, 185),
+                                ),
+                              ),
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                            ],
                           ),
                         ),
                         SizedBox(
-                          height: 30,
+                          height: size.height * 0.04,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10, right: 10),
@@ -234,7 +235,7 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 55,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -248,6 +249,9 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                 style: TextStyle(color: Colors.white),
                               ),
                               onPressed: () async {
+                                if (adv_amt_ctrl.text.isNotEmpty && adv_amt_ctrl.text!="") {
+                                  
+                                
                                 int max = await TeaDB.instance
                                     .getMaxCommonQuery(
                                         'AdvanceTable', 'trans_id', " ");
@@ -326,7 +330,13 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                             remarks: widget.remarks.toString(),
                                           )),
                                 );
-                              },
+                              }
+                              else{
+                               CustomSnackbar snak = CustomSnackbar();
+                              snak.showSnackbar(context, "Enter Advance Amount", "");
+
+                              }
+  }
                             ),
                             TextButton(
                               child: Text(
@@ -371,20 +381,20 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: const Color.fromARGB(255, 199, 198, 198),
+              color: const Color.fromARGB(255, 5, 5, 5),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: const Color.fromARGB(255, 199, 198, 198),
+              color: const Color.fromARGB(255, 5, 5, 5),
               width: 1.0,
             ),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(
-              color: Colors.black,
+              color: Color.fromARGB(255, 5, 5, 5),
               width: 3,
             ),
           ),

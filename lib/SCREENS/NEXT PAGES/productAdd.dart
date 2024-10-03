@@ -70,15 +70,15 @@ class _ProductAddPageState extends State<ProductAddPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 174, 195, 233),
-          title: Consumer<Controller>(
-            builder: (BuildContext context, Controller value, Widget? child) =>
-                Text(
-              value.tSeries.toString(),
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 182, 84, 84)),
-            ),
-          ),
+          // title: Consumer<Controller>(
+          //   builder: (BuildContext context, Controller value, Widget? child) =>
+          //       Text(
+          //     value.tSeries.toString(),
+          //     style: TextStyle(
+          //         fontWeight: FontWeight.bold,
+          //         color: Color.fromARGB(255, 182, 84, 84)),
+          //   ),
+          // ),
           actions: [
             IconButton(
               onPressed: () async {
@@ -112,61 +112,103 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Container(
+                          color: Color.fromARGB(255, 174, 195, 233),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Select Product",
+                                    style: TextStyle(
+                                      color: Colors.purple,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 20, top: 10),
+                                child: Divider(
+                                  thickness: 2,
+                                  color: Color.fromARGB(255, 165, 162, 165),
+                                ),
+                              ),
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                            ],
+                          ),
+                        ),
                         SizedBox(
                           height: size.height * 0.04,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Select Product",
-                              style: TextStyle(
-                                color: Colors.purple,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                        SizedBox(
+                          height: 30,
+                        ),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: size
+                                .width, // Set the max width to the full screen width
+                          ),
+                          child: IntrinsicWidth(
+                            child: Container(
+                              height: size.height * 0.08,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
                               ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Divider(
-                            thickness: 2,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Container(
-                          color: Colors.grey[100],
-                          height: size.height * 0.07,
-                          width: 117,
-                          child: DropdownButton<Map<String, dynamic>>(
-                            hint: Text("Select Route"),
-                            value: value.selectedPro,
-                            onChanged: (Map<String, dynamic>? newValue) async {
-                              setState(() {
-                                value.selectedPro = newValue;
-                                print("selected pro---${value.selectedPro}");
-                              });
-                              await Provider.of<Controller>(context,
-                                      listen: false)
-                                  .setSelectedProduct(value.selectedPro!);
-                            },
-                            items: value.prodList
-                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                              // width: 117,
+                              child: DropdownButton<Map<String, dynamic>>(
+                                isExpanded: true,
+                                borderRadius: BorderRadius.circular(10),
+                                underline: SizedBox(),
+                                padding: EdgeInsets.all(12),
+                                hint: Text("Select"),
+                                value: value.selectedPro,
+                                onChanged:
+                                    (Map<String, dynamic>? newValue) async {
+                                  setState(() {
+                                    value.selectedPro = newValue;
+                                    print(
+                                        "selected pro---${value.selectedPro}");
+                                  });
+                                  await Provider.of<Controller>(context,
+                                          listen: false)
+                                      .setSelectedProduct(value.selectedPro!);
+                                },
+                                items: value.prodList.map<
+                                        DropdownMenuItem<Map<String, dynamic>>>(
                                     (Map<String, dynamic> pro) {
-                              return DropdownMenuItem<Map<String, dynamic>>(
-                                value: pro,
-                                child: Text(pro['product']),
-                              );
-                            }).toList(),
+                                  return DropdownMenuItem<Map<String, dynamic>>(
+                                    value: pro,
+                                    child: Text(pro['product']),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                           ),
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        ElevatedButton(
+                       
+                       
+                      ],
+                    ),
+                  ),
+                )), bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+           padding: EdgeInsets.only(right: 10),
+            child:  ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                           ),
@@ -190,10 +232,10 @@ class _ProductAddPageState extends State<ProductAddPage> {
                             );
                           },
                         ),
-                      ],
-                    ),
-                  ),
-                )));
+          ),
+        ],
+      ),
+                );
   }
 
   TextFormField customTextfield(TextEditingController contr, int? maxline,

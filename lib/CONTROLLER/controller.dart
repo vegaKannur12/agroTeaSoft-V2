@@ -723,6 +723,8 @@ class Controller extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt("sel_accid", selsupplier["acid"]);
     prefs.setString("sel_accnm", selsupplier["acc_name"]);
+    prefs.setString("sel_acccod", selsupplier["acc_code"]);
+
     print("sel supplier---$selectedsuplier, ${selsupplier["acid"]}");
     notifyListeners();
   }
@@ -840,18 +842,21 @@ class Controller extends ChangeNotifier {
 
   getProductsfromDB() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       double sum = 0.0;
       List proList = await TeaDB.instance.getProductListfromDB();
       print("prodList----${proList}");
       prodList.clear();
       // prodList = [
-      //   {"id": 1, "pid": 1, "product": "A"},
-      //   // {"id": 2, "pid": 2, "product": "B"},
+      //   {"id": 1, "pid": 1, "product": "Afddgdgdfgfghf"},
+      //   {"id": 2, "pid": 2, "product": "Bnbnbmhmhmhmh"},
       // ];
       for (var item in proList) {
         prodList.add(item);
       }
       selectedPro = prodList[0];
+      prefs.setInt("sel_proid", selectedPro!["pid"]);
+      prefs.setString("sel_pronm", selectedPro!["product"].toString().trimLeft());
 
       // var lengthh = prodList.length;
       // colected = List.generate(lengthh, (index) => TextEditingController());

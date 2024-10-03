@@ -67,7 +67,7 @@ class _MainHomeState extends State<MainHome> {
       onWillPop: () => _onBackPressed(context),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.lightGreen,
+          backgroundColor: Color.fromARGB(255, 193, 213, 252),
           title: Consumer<Controller>(
             builder: (BuildContext context, Controller value, Widget? child) =>
                 Text(
@@ -104,44 +104,54 @@ class _MainHomeState extends State<MainHome> {
         drawer: CustomDrawer(),
         body: Consumer<Controller>(
           builder: (BuildContext context, Controller value, Widget? child) =>
-              Container(
-                  // color: Colors.amber,
-                  child: SingleChildScrollView(
+              SingleChildScrollView(
             child: Column(
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 11.0, left: 11, right: 11),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Container(
+                  color: Color.fromARGB(255, 193, 213, 252),
+                  child: Column(
                     children: [
-                      Row(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                rutdio.showRouteDialog(context);
-                              },
-                              icon: Icon(
-                                Icons.location_on_outlined,
-                                color: Colors.black,
-                              )),
-                          Container(
-                            child: Text(
-                              value.selectedrut == null
-                                  ? "Choose Route"
-                                  : value.selectedrut!.toUpperCase(),
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 11.0, left: 11, right: 11),
+                        child: Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      rutdio.showRouteDialog(context);
+                                    },
+                                    icon: Icon(
+                                      Icons.location_on_outlined,
+                                      color: Colors.black,
+                                    )),
+                                Container(
+                                  child: Text(
+                                    value.selectedrut == null
+                                        ? "Choose Route"
+                                        : value.selectedrut!.toUpperCase(),
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 18),
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.04,
                       ),
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: size.height * 0.1,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -221,93 +231,109 @@ class _MainHomeState extends State<MainHome> {
                     ],
                   ),
                 ),
-                value.selectedSupplierMap != null && value.selectedSupplierMap!.isNotEmpty 
+                value.selectedSupplierMap != null &&
+                        value.selectedSupplierMap!.isNotEmpty
                     ? Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 11.0, left: 25, bottom: 3, right: 11),
-                              child: Row(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      // color: Colors.yellow,
-                                      width: size.width * 1 / 3.5,
-                                      child: Text(
-                                        "ACC CODE",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                        
-                                          fontSize: 16,
-                                        ),
+                            padding: const EdgeInsets.only(
+                                top: 11.0, left: 25, bottom: 3, right: 11),
+                            child: Row(
+                                // crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    // color: Colors.yellow,
+                                    width: size.width * 1 / 3.5,
+                                    child: Text(
+                                      "ACC CODE",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                    Flexible(
-                                        child: Text(value
-                                            .selectedSupplierMap!["acc_code"]
-                                            .toString()
-                                            .trimLeft(),style: TextStyle(  fontWeight: FontWeight.bold,),))
-                                  ])),
-                          Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 25, bottom: 11.0, right: 11),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      // color: Colors.yellow,
-                                      width: size.width * 1 / 3.5,
-                                      child: Text(
-                                        "ACC NAME",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                        
-                                          fontSize: 16,
-                                        ),
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      value.selectedSupplierMap!["acc_code"]
+                                          .toString()
+                                          .trimLeft(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Flexible(
-                                        child: Text(value
-                                            .selectedSupplierMap!["acc_name"]
-                                            .toString()
-                                            .trimLeft(),style: TextStyle(  fontWeight: FontWeight.bold,),))
-                                  ])),
+                                  ),
+                                ]),
+                          ),
                           Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 11.0, left: 25, bottom: 11.0, right: 11),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        padding: EdgeInsets.all(10),
-                                        // color: Colors.yellow,
-                                        width: size.width * 1 / 3.5,
-                                        child: Text(
-                                          "Bag Count",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        )),
-                                    SizedBox(
-                                      width: 70,
-                                      height: 45,
-                                      child: customTextfield(
-                                          bagno_ctrl,
-                                          1,
-                                          TextInputType.number,
-                                          (String value) {}),
-                                    )
-                                  ])),
+                            padding: const EdgeInsets.only(
+                                left: 25, bottom: 11.0, right: 11),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  // color: Colors.yellow,
+                                  width: size.width * 1 / 3.5,
+                                  child: Text(
+                                    "ACC NAME",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    value.selectedSupplierMap!["acc_name"]
+                                        .toString()
+                                        .trimLeft(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 11.0, left: 25, bottom: 11.0, right: 11),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    // color: Colors.yellow,
+                                    width: size.width * 1 / 3.5,
+                                    child: Text(
+                                      "Bag Count",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 70,
+                                    height: 45,
+                                    child: customTextfield(
+                                        bagno_ctrl,
+                                        1,
+                                        TextInputType.number,
+                                        (String value) {}),
+                                  ),
+                                ]),
+                          ),
                           SizedBox(
                             height: 30,
                           ),
-                          Row(mainAxisAlignment: MainAxisAlignment.center,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -318,28 +344,34 @@ class _MainHomeState extends State<MainHome> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () {
-                                    if (value.selectedsuplier != "" &&
-                            value.selectedsuplier.toString().toLowerCase() !=
-                                "null" &&
-                            value.selectedsuplier.toString().isNotEmpty &&
-                            value.selectedrut != null &&
-                            bagno_ctrl.text != "" ) {
-                               Navigator.of(context).push(
-                                    PageRouteBuilder(
+                                  if (value.selectedsuplier != "" &&
+                                      value.selectedsuplier
+                                              .toString()
+                                              .toLowerCase() !=
+                                          "null" &&
+                                      value.selectedsuplier
+                                          .toString()
+                                          .isNotEmpty &&
+                                      value.selectedrut != null &&
+                                      bagno_ctrl.text != "") {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
                                         opaque: false, // set to false
-                                        pageBuilder: (_, __, ___) => BagCountPage(
-                                              bagcount: int.parse(bagno_ctrl.text
-                                                  .toString()
-                                                  .trim()),
-                                            )),
-                                  );
-                              
-                            }
-                            else {
-                          CustomSnackbar snak = CustomSnackbar();
-                          snak.showSnackbar(context, "Fill all fields", "");
-                        }
-                                 
+                                        pageBuilder: (_, __, ___) =>
+                                            BagCountPage(
+                                          bagcount: int.parse(bagno_ctrl.text
+                                              .toString()
+                                              .trim()),
+                                        ),
+                                      ),
+                                    );
+                                  } 
+                                  else 
+                                  {
+                                    CustomSnackbar snak = CustomSnackbar();
+                                    snak.showSnackbar(
+                                        context, "Fill all fields", "");
+                                  }
                                 },
                               ),
                             ],
@@ -349,7 +381,7 @@ class _MainHomeState extends State<MainHome> {
                     : Container(),
               ],
             ),
-          )),
+          ),
         ),
       ),
     );
@@ -409,17 +441,18 @@ Future<bool> _onBackPressed(BuildContext context) async {
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('cancel'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          TextButton(
-            child: const Text('Ok'),
+            child: const Text('Yes'),
             onPressed: () {
               exit(0);
             },
           ),
+          TextButton(
+            child: const Text('No'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          
         ],
       );
     },

@@ -35,6 +35,7 @@ class _DamageNRemarkState extends State<DamageNRemark> {
     Provider.of<Controller>(context, listen: false).geTseries();
     displaydate = DateFormat('dd-MM-yyyy').format(date);
     total_ctrl.text = widget.totalweight.toString();
+    nettot_ctrl.text = widget.totalweight.toString();
     print(("-----$displaydate"));
   }
 
@@ -43,193 +44,223 @@ class _DamageNRemarkState extends State<DamageNRemark> {
     print("${widget.weightString}=========${widget.totalweight}----");
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 174, 195, 233),
-          title: Consumer<Controller>(
-            builder: (BuildContext context, Controller value, Widget? child) =>
-                Text(
-              value.tSeries.toString(),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 174, 195, 233),
+        // title: Consumer<Controller>(
+        //   builder: (BuildContext context, Controller value, Widget? child) =>
+        //       Text(
+        //     value.tSeries.toString(),
+        //     style: TextStyle(
+        //         fontWeight: FontWeight.bold,
+        //         color: Color.fromARGB(255, 182, 84, 84)),
+        //   ),
+        // ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              displaydate.toString(),
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 182, 84, 84)),
+                  color: Color.fromARGB(255, 99, 42, 145),
+                  fontWeight: FontWeight.bold),
             ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () async {
-                List<Map<String, dynamic>> list =
-                    await TeaDB.instance.getListOfTables();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TableList(list: list)),
-                );
-              },
-              icon: Icon(Icons.table_bar),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                displaydate.toString(),
-                style: TextStyle(
-                    color: Color.fromARGB(255, 99, 42, 145),
-                    fontWeight: FontWeight.bold),
-              ),
-            )
-          ],
-        ),
-        body: Consumer<Controller>(
-            builder: (BuildContext context, Controller value, Widget? child) =>
-                Container(
-                  width: size.width,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: size.height * 0.04,
+          )
+        ],
+      ),
+      body: Consumer<Controller>(
+          builder: (BuildContext context, Controller value, Widget? child) =>
+              Container(
+                width: size.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        color: Color.fromARGB(255, 174, 195, 233),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Weight Details (in KG)",
+                                  style: TextStyle(
+                                    color: Colors.purple,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                )
+                              ],
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 20, right: 20, top: 10),
+                              child: Divider(
+                                thickness: 2,
+                                color: Color.fromARGB(255, 185, 183, 185),
+                              ),
+                            ),
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.all(10),
-                                  // color: Colors.yellow,
-                                  width: size.width * 1 / 3.5,
-                                  child: Text("TOTAL")),
-                              SizedBox(
-                                  height: 60,
-                                  width: 60,
-                                  child:  TextFormField(
-                                  controller: total_ctrl,
-                                  decoration: InputDecoration(border: InputBorder.none,
-                                   
-                                      hintText: ""),
-                                ),),
-                               
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.01,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.all(10),
-                                  // color: Colors.yellow,
-                                  width: size.width * 1 / 3.5,
-                                  child: Text("DAMAGE")),
-                              SizedBox(
-                                  height: 60,
-                                  width: 60,
-                                  child: customTextfield(
-                                      damge_ctrl,
-                                      1,
-                                      TextInputType.number,
-                                      (String input) => nettotCalulate()))
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.01,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.all(10),
-                                  // color: Colors.yellow,
-                                  width: size.width * 1 / 3.5,
-                                  child: Text("NET TOTAL")),
-                              SizedBox(
-                                height: 60,
-                                width: 60,
+                      ),
+                      SizedBox(
+                        height: size.height * 0.04,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                // color: Colors.yellow,
+                                width: size.width * 1 / 3.5,
+                                child: Text("TOTAL")),
+                            SizedBox(
+                              height: 60,
+                              width: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  controller: nettot_ctrl,
-                                  decoration: InputDecoration(border: InputBorder.none,
-                                   
-                                      hintText: ""),
+                                  readOnly: true,
+                                  controller: total_ctrl,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none, hintText: ""),
                                 ),
                               ),
-                    
-                              // SizedBox(
-                              //     height: 60,
-                              //     width: 60,
-                              //     child: customTextfield(nettot_ctrl, 1,
-                              //         TextInputType.number, (String value) {}),)
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                         SizedBox(
-                          height: size.height * 0.01,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                // color: Colors.yellow,
+                                width: size.width * 1 / 3.5,
+                                child: Text("DAMAGE")),
+                            SizedBox(
+                                height: 50,
+                                width: 60,
+                                child: customTextfield(
+                                    damge_ctrl,
+                                    1,
+                                    TextInputType.number,
+                                    (String input) => nettotCalulate()))
+                          ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.all(10),
-                                  // color: Colors.yellow,
-                                  width: size.width * 1 / 3.5,
-                                  child: Text("Remarks")),
-                               SizedBox(
-                                  height: 60,
-                                  width: 200,
-                                  child: customTextfield(
-                                      remark_ctrl,
-                                      3,
-                                      TextInputType.text,
-                                      (String input) {}))
-                    
-                              // SizedBox(
-                              //     height: 60,
-                              //     width: 60,
-                              //     child: customTextfield(nettot_ctrl, 1,
-                              //         TextInputType.number, (String value) {}),)
-                            ],
-                          ),
-                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                // color: Colors.yellow,
+                                width: size.width * 1 / 3.5,
+                                child: Text("NET TOTAL")),
+                            SizedBox(
+                              height: 60,
+                              width: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  readOnly: true,
+                                  controller: nettot_ctrl,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none, hintText: ""),
+                                ),
+                              ),
+                            ),
 
-                        SizedBox(
-                          height: 55,
+                            // SizedBox(
+                            //     height: 60,
+                            //     width: 60,
+                            //     child: customTextfield(nettot_ctrl, 1,
+                            //         TextInputType.number, (String value) {}),)
+                          ],
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                          ),
-                          child: Text(
-                            "NEXT",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                  opaque: false, // set to false
-                                  pageBuilder: (_, __, ___) => ProductAddPage(
-                                        total: total_ctrl.text,
-                                        damage: damge_ctrl.text,
-                                        nettotal: nettot_ctrl.text,
-                                        bagcount: widget.bagcount.toString(),
-                                        weightString:
-                                            widget.weightString.toString(),remarks: remark_ctrl.text.toString(),
-                                      )),
-                            );
-                          },
+                      ),
+                      SizedBox(
+                        height: size.height * 0.01,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                // color: Colors.yellow,
+                                width: size.width * 1 / 3.5,
+                                child: Text("Remarks")),
+                            SizedBox(
+                                height: 60,
+                                width: 200,
+                                child: customTextfield(remark_ctrl, 3,
+                                    TextInputType.text, (String input) {}))
+
+                            // SizedBox(
+                            //     height: 60,
+                            //     width: 60,
+                            //     child: customTextfield(nettot_ctrl, 1,
+                            //         TextInputType.number, (String value) {}),)
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                )));
+                ),
+              )),
+      bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+           padding: EdgeInsets.only(right: 10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+              ),
+              child: Text(
+                "NEXT",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                      opaque: false, // set to false
+                      pageBuilder: (_, __, ___) => ProductAddPage(
+                            total: total_ctrl.text,
+                            damage: damge_ctrl.text.isEmpty ||
+                                    damge_ctrl.text.toString() == ""
+                                ? "0"
+                                : damge_ctrl.text,
+                            nettotal: nettot_ctrl.text,
+                            bagcount: widget.bagcount.toString(),
+                            weightString: widget.weightString.toString(),
+                            remarks: remark_ctrl.text.toString().isEmpty ||
+                                    remark_ctrl.text.toString() == ""
+                                ? ""
+                                : remark_ctrl.text.toString(),
+                          )),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   nettotCalulate() {
