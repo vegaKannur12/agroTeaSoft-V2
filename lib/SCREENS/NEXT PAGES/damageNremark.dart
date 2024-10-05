@@ -124,8 +124,8 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 width: size.width * 1 / 3.5,
                                 child: Text("TOTAL")),
                             SizedBox(
-                              height: 60,
-                              width: 60,
+                              width: 140,
+                              height: 55,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
@@ -150,8 +150,8 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 width: size.width * 1 / 3.5,
                                 child: Text("DAMAGE")),
                             SizedBox(
-                                height: 50,
-                                width: 60,
+                                width: 200,
+                                height: 55,
                                 child: customTextfield(
                                     damge_ctrl,
                                     1,
@@ -171,8 +171,8 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 width: size.width * 1 / 3.5,
                                 child: Text("NET TOTAL")),
                             SizedBox(
-                              height: 60,
-                              width: 60,
+                              width: 140,
+                              height: 55,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
@@ -206,7 +206,7 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 width: size.width * 1 / 3.5,
                                 child: Text("Remarks")),
                             SizedBox(
-                                height: 60,
+                                height: 70,
                                 width: 200,
                                 child: customTextfield(remark_ctrl, 3,
                                     TextInputType.text, (String input) {}))
@@ -227,35 +227,45 @@ class _DamageNRemarkState extends State<DamageNRemark> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-           padding: EdgeInsets.only(right: 10),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+           padding: EdgeInsets.only(right: 7),
+            child: SizedBox(height: 60,
+                  width: 120,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                ),
+                child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "NEXT",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded,
+                            size: 16, color: Colors.white)
+                      ],
+                    ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                        opaque: false, // set to false
+                        pageBuilder: (_, __, ___) => ProductAddPage(
+                              total: total_ctrl.text,
+                              damage: damge_ctrl.text.isEmpty ||
+                                      damge_ctrl.text.toString() == ""
+                                  ? "0"
+                                  : damge_ctrl.text,
+                              nettotal: nettot_ctrl.text,
+                              bagcount: widget.bagcount.toString(),
+                              weightString: widget.weightString.toString(),
+                              remarks: remark_ctrl.text.toString().isEmpty ||
+                                      remark_ctrl.text.toString() == ""
+                                  ? ""
+                                  : remark_ctrl.text.toString(),
+                            )),
+                  );
+                },
               ),
-              child: Text(
-                "NEXT",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                      opaque: false, // set to false
-                      pageBuilder: (_, __, ___) => ProductAddPage(
-                            total: total_ctrl.text,
-                            damage: damge_ctrl.text.isEmpty ||
-                                    damge_ctrl.text.toString() == ""
-                                ? "0"
-                                : damge_ctrl.text,
-                            nettotal: nettot_ctrl.text,
-                            bagcount: widget.bagcount.toString(),
-                            weightString: widget.weightString.toString(),
-                            remarks: remark_ctrl.text.toString().isEmpty ||
-                                    remark_ctrl.text.toString() == ""
-                                ? ""
-                                : remark_ctrl.text.toString(),
-                          )),
-                );
-              },
             ),
           ),
         ],

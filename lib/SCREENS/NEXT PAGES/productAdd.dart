@@ -68,174 +68,181 @@ class _ProductAddPageState extends State<ProductAddPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 174, 195, 233),
-          // title: Consumer<Controller>(
-          //   builder: (BuildContext context, Controller value, Widget? child) =>
-          //       Text(
-          //     value.tSeries.toString(),
-          //     style: TextStyle(
-          //         fontWeight: FontWeight.bold,
-          //         color: Color.fromARGB(255, 182, 84, 84)),
-          //   ),
-          // ),
-          actions: [
-            IconButton(
-              onPressed: () async {
-                List<Map<String, dynamic>> list =
-                    await TeaDB.instance.getListOfTables();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TableList(list: list)),
-                );
-              },
-              icon: Icon(Icons.table_bar),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 174, 195, 233),
+        // title: Consumer<Controller>(
+        //   builder: (BuildContext context, Controller value, Widget? child) =>
+        //       Text(
+        //     value.tSeries.toString(),
+        //     style: TextStyle(
+        //         fontWeight: FontWeight.bold,
+        //         color: Color.fromARGB(255, 182, 84, 84)),
+        //   ),
+        // ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              List<Map<String, dynamic>> list =
+                  await TeaDB.instance.getListOfTables();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TableList(list: list)),
+              );
+            },
+            icon: Icon(Icons.table_bar),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              displaydate.toString(),
+              style: TextStyle(
+                  color: Color.fromARGB(255, 99, 42, 145),
+                  fontWeight: FontWeight.bold),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                displaydate.toString(),
-                style: TextStyle(
-                    color: Color.fromARGB(255, 99, 42, 145),
-                    fontWeight: FontWeight.bold),
-              ),
-            )
-          ],
-        ),
-        body: Consumer<Controller>(
-            builder: (BuildContext context, Controller value, Widget? child) =>
-                Container(
-                  width: size.width,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          color: Color.fromARGB(255, 174, 195, 233),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: size.height * 0.04,
+          )
+        ],
+      ),
+      body: Consumer<Controller>(
+          builder: (BuildContext context, Controller value, Widget? child) =>
+              Container(
+                width: size.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        color: Color.fromARGB(255, 174, 195, 233),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Select Product",
+                                  style: TextStyle(
+                                    color: Colors.purple,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                )
+                              ],
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 20, right: 20, top: 10),
+                              child: Divider(
+                                thickness: 2,
+                                color: Color.fromARGB(255, 165, 162, 165),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Select Product",
-                                    style: TextStyle(
-                                      color: Colors.purple,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 20, right: 20, top: 10),
-                                child: Divider(
-                                  thickness: 2,
-                                  color: Color.fromARGB(255, 165, 162, 165),
-                                ),
-                              ),
-                              SizedBox(
-                                height: size.height * 0.04,
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: size.height * 0.04,
+                      ),
+                      SizedBox(
+                        height: size.height * 0.04,
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: size
+                              .width, // Set the max width to the full screen width
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: size
-                                .width, // Set the max width to the full screen width
-                          ),
-                          child: IntrinsicWidth(
-                            child: Container(
-                              height: size.height * 0.08,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black,
-                                ),
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white,
+                        child: IntrinsicWidth(
+                          child: Container(
+                            height: size.height * 0.09,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
                               ),
-                              // width: 117,
-                              child: DropdownButton<Map<String, dynamic>>(
-                                isExpanded: true,
-                                borderRadius: BorderRadius.circular(10),
-                                underline: SizedBox(),
-                                padding: EdgeInsets.all(12),
-                                hint: Text("Select"),
-                                value: value.selectedPro,
-                                onChanged:
-                                    (Map<String, dynamic>? newValue) async {
-                                  setState(() {
-                                    value.selectedPro = newValue;
-                                    print(
-                                        "selected pro---${value.selectedPro}");
-                                  });
-                                  await Provider.of<Controller>(context,
-                                          listen: false)
-                                      .setSelectedProduct(value.selectedPro!);
-                                },
-                                items: value.prodList.map<
-                                        DropdownMenuItem<Map<String, dynamic>>>(
-                                    (Map<String, dynamic> pro) {
-                                  return DropdownMenuItem<Map<String, dynamic>>(
-                                    value: pro,
-                                    child: Text(pro['product']),
-                                  );
-                                }).toList(),
-                              ),
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white,
+                            ),
+                            // width: 117,
+                            child: DropdownButton<Map<String, dynamic>>(
+                              isExpanded: true,
+                              borderRadius: BorderRadius.circular(10),
+                              underline: SizedBox(),
+                              padding: EdgeInsets.all(12),
+                              hint: Text("Select"),
+                              value: value.selectedPro,
+                              onChanged:
+                                  (Map<String, dynamic>? newValue) async {
+                                setState(() {
+                                  value.selectedPro = newValue;
+                                  print("selected pro---${value.selectedPro}");
+                                });
+                                await Provider.of<Controller>(context,
+                                        listen: false)
+                                    .setSelectedProduct(value.selectedPro!);
+                              },
+                              items: value.prodList
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> pro) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: pro,
+                                  child: Text(pro['product']),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),
-                       
-                       
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                )), bottomNavigationBar: Row(
+                ),
+              )),
+      bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-           padding: EdgeInsets.only(right: 10),
-            child:  ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                          ),
-                          child: Text(
-                            "NEXT",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                  opaque: false, // set to false
-                                  pageBuilder: (_, __, ___) => AdvanceAddPage(
-                                        total: widget.total.toString(),
-                                        damage: widget.damage.toString(),
-                                        nettotal: widget.nettotal.toString(),
-                                        bagcount: widget.bagcount.toString(),
-                                        weightString:
-                                            widget.weightString.toString(),
-                                        remarks: widget.remarks.toString(),
-                                      )),
-                            );
-                          },
-                        ),
+            padding: EdgeInsets.only(right: 7),
+            child: SizedBox(
+              height: 60,
+              width: 120,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "NEXT",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        size: 16, color: Colors.white)
+                  ],
+                ),
+                onPressed: () async {
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                        opaque: false, // set to false
+                        pageBuilder: (_, __, ___) => AdvanceAddPage(
+                              total: widget.total.toString(),
+                              damage: widget.damage.toString(),
+                              nettotal: widget.nettotal.toString(),
+                              bagcount: widget.bagcount.toString(),
+                              weightString: widget.weightString.toString(),
+                              remarks: widget.remarks.toString(),
+                            )),
+                  );
+                },
+              ),
+            ),
           ),
         ],
       ),
-                );
+    );
   }
 
   TextFormField customTextfield(TextEditingController contr, int? maxline,

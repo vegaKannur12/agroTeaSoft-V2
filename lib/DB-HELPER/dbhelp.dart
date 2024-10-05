@@ -57,7 +57,8 @@ class TeaDB {
             route INTEGER,
             status INTEGER,
             acc_master_type TEXT,
-            acc_ser_code TEXT
+            acc_ser_code TEXT,
+            acc_ext_place TEXT
           )
           ''');
     await db.execute('''
@@ -167,7 +168,7 @@ class TeaDB {
   Future insertACmasterDetails(AccountMasterModel adata) async {
     final db = await database;
     var query3 =
-        'INSERT INTO accountMasterTable(acid,acc_code,acc_name,route,status,acc_master_type,acc_ser_code) VALUES(${adata.id}, "${adata.acc_code}","${adata.acc_name}",${adata.route},${adata.status},"${adata.acc_master_type}","${adata.acc_ser_code}")';
+        'INSERT INTO accountMasterTable(acid,acc_code,acc_name,route,status,acc_master_type,acc_ser_code,acc_ext_place) VALUES(${adata.id}, "${adata.acc_code}","${adata.acc_name}",${adata.route},${adata.status},"${adata.acc_master_type}","${adata.acc_ser_code}","${adata.acc_ext_place}")';
     var res = await db.rawInsert(query3);
     print(query3);
     print(res);
@@ -194,7 +195,8 @@ class TeaDB {
     return res;
   }
 
-  Future<int> insertTransDetail(TransDetailModel detail) async {
+  Future<int> insertTransDetail(TransDetailModel detail) async 
+  {
     final db = await instance.database;
 
     var res = await db.insert('TransDetailsTable', detail.toMap());
@@ -250,10 +252,10 @@ class TeaDB {
     Database db = await instance.database;
     if (rid == " ") {
       list = await db.rawQuery(
-          'SELECT acid,acc_code,acc_name,route,acc_ser_code FROM accountMasterTable where acc_master_type="SU"');
+          'SELECT acid,acc_code,acc_name,route,acc_ser_code,acc_ext_place FROM accountMasterTable where acc_master_type="SU"');
     } else {
       list = await db.rawQuery(
-          'SELECT acid,acc_code,acc_name,route,acc_ser_code FROM accountMasterTable where route ="$rid" and acc_master_type="SU"');
+          'SELECT acid,acc_code,acc_name,route,acc_ser_code,acc_ext_place FROM accountMasterTable where route ="$rid" and acc_master_type="SU"');
     }
     return list;
   }

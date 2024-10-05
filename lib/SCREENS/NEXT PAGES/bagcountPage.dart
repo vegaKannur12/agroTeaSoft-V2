@@ -6,6 +6,7 @@ import 'package:tsupply/CONTROLLER/controller.dart';
 import 'package:tsupply/DB-HELPER/dbhelp.dart';
 import 'package:tsupply/SCREENS/NEXT%20PAGES/damageNremark.dart';
 import 'package:tsupply/tableList.dart';
+import 'package:flutter/services.dart';
 
 class BagCountPage extends StatefulWidget {
   final int? bagcount;
@@ -19,14 +20,17 @@ class _BagCountPageState extends State<BagCountPage> {
   DateTime date = DateTime.now();
   String? displaydate;
   List<TextEditingController> _controllers = [];
+  List<Text> errorText = [];
   double summ = 0;
   int isempty = 0;
+  int isError = 0;
 
   @override
   void initState() {
     super.initState();
     for (int i = 0; i < int.parse(widget.bagcount.toString()); i++) {
       _controllers.add(TextEditingController());
+      errorText.add(Text(""));
     }
     Provider.of<Controller>(context, listen: false).geTseries();
     displaydate = DateFormat('dd-MM-yyyy').format(date);
@@ -131,21 +135,31 @@ class _BagCountPageState extends State<BagCountPage> {
                           shrinkWrap: true,
                           itemCount: widget.bagcount,
                           itemBuilder: ((context, index) {
+                            int i = index + 1;
                             return Center(
                               child: Padding(
                                   padding: const EdgeInsets.all(10),
                                   child:
                                       // Text(index.toString()),
+                                      Row(
+                                    children: [
+                                      Text(
+                                        " Bag $i  ",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
                                       SizedBox(
-                                    width: 70,
-                                    height: 45,
-                                    child: customTextfield(
-                                      _controllers[index],
-                                      1,
-                                      TextInputType.number,
-                                      (String input) =>
-                                          calculateSum(input, index),
-                                    ),
+                                        width: 140,
+                                        height: 55,
+                                        child: customTextfield(
+                                          _controllers[index],
+                                          1,
+                                          TextInputType.number,
+                                          (String input) =>
+                                              calculateSum(input, index),
+                                        ),
+                                      ),
+                                      errorText[index]
+                                    ],
                                   )),
                             );
                           })),
@@ -154,7 +168,7 @@ class _BagCountPageState extends State<BagCountPage> {
                 ),
               )),
       bottomNavigationBar: SizedBox(
-        height: 40,
+        height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -171,7 +185,9 @@ class _BagCountPageState extends State<BagCountPage> {
                         Text(
                           ": ${summ.toString()} KG",
                           style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
                         ),
                       ],
                     ),
@@ -179,50 +195,84 @@ class _BagCountPageState extends State<BagCountPage> {
                 : Container(),
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                ),
-                child: Text(
-                  "NEXT",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  String weightString = "";
-                  for (int i = 0;
-                      i < int.parse(widget.bagcount.toString());
-                      i++) {
-                    if (_controllers[i].text.isEmpty) {
-                      isempty = 1;
-                      break;
-                    } else {
-                      isempty = 0;
-                      String temp = _controllers[i].text;
-                      if (weightString.isEmpty) {
-                        weightString = temp;
-                      } else {
-                        weightString = '$weightString,$temp';
-                      }
-                      // weightString += double.parse(_controllers[i].text);
-                    }
-                  }
-                  print("weightString============>$weightString");
-                  if (isempty == 0) {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        opaque: false, // set to false
-                        pageBuilder: (_, __, ___) => DamageNRemark(
-                          totalweight: double.parse(summ.toString()),
-                          weightString: weightString.toString(),
-                          bagcount: widget.bagcount.toString(),
-                        ),
+              child: SizedBox(
+                height: 60,
+                width: 120,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "NEXT",
+                        style: TextStyle(color: Colors.white),
                       ),
-                    );
-                  } else {
-                    CustomSnackbar snak = CustomSnackbar();
-                    snak.showSnackbar(context, "Fill all fields", "");
-                  }
-                },
+                      Icon(Icons.arrow_forward_ios_rounded,
+                          size: 16, color: Colors.white)
+                    ],
+                  ),
+                  onPressed: () {
+                    String weightString = "";
+                    bool hasError = false;
+                    for (int i = 0;
+                        i < int.parse(widget.bagcount.toString());
+                        i++) {
+                      if (_controllers[i].text.isEmpty) {
+                        isempty = 1;
+                        hasError = true;
+                        break;
+                      } else {
+                        isempty = 0;
+                        String temp = _controllers[i].text.toString().trim();
+                        double weight = double.tryParse(temp) ?? 0;
+                        // int nom =
+                        //     int.parse(_controllers[i].text.toString().trim());
+                        // if (nom > 0) {
+                        if (weight <= 0) {
+                          setState(() {
+                            errorText[i] = Text(
+                              "Invalid weight",
+                              style: TextStyle(color: Colors.red),
+                            );
+                          });
+                          hasError = true;
+                          break;
+                        } else {
+                          setState(() {
+                            errorText[i] = Text("");
+                          });
+                          if (weightString.isEmpty) {
+                            weightString = temp;
+                          } else {
+                            weightString = '$weightString,$temp';
+                          }
+                        }
+                    }
+                    }
+                    print("weightString============>$weightString");
+                    if (!hasError && isempty == 0) {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          opaque: false, // set to false
+                          pageBuilder: (_, __, ___) => DamageNRemark(
+                            totalweight: double.parse(summ.toString()),
+                            weightString: weightString.toString(),
+                            bagcount: widget.bagcount.toString(),
+                          ),
+                        ),
+                      );
+                    } else if (isempty == 1) {
+                      CustomSnackbar snak = CustomSnackbar();
+                      snak.showSnackbar(context, "Fill all fields", "");
+                    } else if (hasError) {
+                      CustomSnackbar snak = CustomSnackbar();
+                      snak.showSnackbar(
+                          context, "Bag weight must be greater than zero", "");
+                    }
+                  },
+                ),
               ),
             ),
           ],
@@ -233,16 +283,30 @@ class _BagCountPageState extends State<BagCountPage> {
 
   calculateSum(String input, int index) {
     // Update the controller text, this is just to ensure we have the latest value
-    double newValue = double.tryParse(input) ?? 0;
-    // Recalculate the sum by iterating over all controllers
-    summ = 0.0; // Reset sum before recalculating
-    for (var controller in _controllers) {
-      double value =
-          double.tryParse(controller.text) ?? 0; // Parse each controller's text
-      summ += value; // Accumulate the sum
+    errorText[index] = Text("");
+    if (input.toString().isNotEmpty) {
+      double newValue = double.tryParse(input) ?? 0;
+      if (newValue > 0) {
+        errorText[index] = Text("");
+        // Recalculate the sum by iterating over all controllers
+        summ = 0.0; // Reset sum before recalculating
+        for (var controller in _controllers) {
+          double value = double.tryParse(controller.text) ??
+              0; // Parse each controller's text
+          summ += value; // Accumulate the sum
+        }
+        setState(() {});
+        print("Updated Sum: ${summ.toString()}");
+      } else {
+        errorText[index] = Text(
+          " Must be > than 0",
+          style: TextStyle(color: Colors.red),
+        );
+        setState(() {});
+        // CustomSnackbar snak = CustomSnackbar();
+        // snak.showSnackbar(context, "Bag count must be greater than zero", "");
+      }
     }
-    setState(() {});
-    print("Updated Sum: ${summ.toString()}");
   }
 
   TextFormField customTextfield(TextEditingController contr, int? maxline,
@@ -258,6 +322,10 @@ class _BagCountPageState extends State<BagCountPage> {
       keyboardType: typ,
       controller: contr,
       maxLines: maxline,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+        // Allow only positive numbers and decimals
+      ],
       decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

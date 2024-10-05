@@ -145,29 +145,32 @@ class _RegistrationState extends State<Registration> {
                         SizedBox(
                           height: 20,
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue),
-                          onPressed: () async {
-                            Provider.of<Controller>(context, listen: false)
-                                .getRouteDetails(0, "", context);
-
-                            await Provider.of<Controller>(context,
-                                    listen: false)
-                                .getUserDetails(3, "");
-                            await Provider.of<Controller>(context,
-                                    listen: false)
-                                .registeration(context);
-
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                  opaque: false, // set to false
-                                  pageBuilder: (_, __, ___) => USERLogin()),
-                            );
-                          },
-                          child: Text(
-                            "REGISTER",
-                            style: TextStyle(color: Colors.white),
+                        SizedBox(
+                          height: 60,width: 150,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            onPressed: () async {
+                              Provider.of<Controller>(context, listen: false)
+                                  .getRouteDetails(0, "", context);
+                          
+                              await Provider.of<Controller>(context,
+                                      listen: false)
+                                  .getUserDetails(3, "");
+                              await Provider.of<Controller>(context,
+                                      listen: false)
+                                  .registeration(context);
+                          
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                    opaque: false, // set to false
+                                    pageBuilder: (_, __, ___) => USERLogin()),
+                              );
+                            },
+                            child: Text(
+                              "REGISTER",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                         SizedBox(

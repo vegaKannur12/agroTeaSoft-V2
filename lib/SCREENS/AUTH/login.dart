@@ -256,40 +256,42 @@ class _USERLoginState extends State<USERLogin> {
                           SizedBox(
                             height: 20,
                           ),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue),
-                              onPressed: () async {
-                                loginLoad = true;
-                                int i = await Provider.of<Controller>(context,
-                                        listen: false)
-                                    .verifyStaff(password.text, context);
-                                print("$i");
-                                if (i == 1) {
-                                  Provider.of<Controller>(context,
+                          SizedBox(height: 60,width: 140,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue),
+                                onPressed: () async {
+                                  loginLoad = true;
+                                  int i = await Provider.of<Controller>(context,
                                           listen: false)
-                                      .getProductsfromDB();
-                                  Provider.of<Controller>(context,
-                                          listen: false)
-                                      .getRoute(" ", context);
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MainHome()
-                                          // CollectionPage(
-                                          //     frompage: "direct")
-                                              ));
-                                } else {
-                                  CustomSnackbar snackbar = CustomSnackbar();
-                                  snackbar.showSnackbar(
-                                      context, "Incorrect Password", "");
-                                }
-                                loginLoad = false;
-                              },
-                              child: Text(
-                                "LOGIN",
-                                style: TextStyle(color: Colors.white),
-                              )),
+                                      .verifyStaff(password.text, context);
+                                  print("$i");
+                                  if (i == 1) {
+                                    Provider.of<Controller>(context,
+                                            listen: false)
+                                        .getProductsfromDB();
+                                    Provider.of<Controller>(context,
+                                            listen: false)
+                                        .getRoute(" ", context);
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MainHome()
+                                            // CollectionPage(
+                                            //     frompage: "direct")
+                                                ));
+                                  } else {
+                                    CustomSnackbar snackbar = CustomSnackbar();
+                                    snackbar.showSnackbar(
+                                        context, "Incorrect Password", "");
+                                  }
+                                  loginLoad = false;
+                                },
+                                child: Text(
+                                  "LOGIN",
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                          ),
                           SizedBox(
                             height: 20,
                           ),

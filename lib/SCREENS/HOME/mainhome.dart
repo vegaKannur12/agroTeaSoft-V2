@@ -173,55 +173,82 @@ class _MainHomeState extends State<MainHome> {
                               Container(
                                 width: size.width *
                                     0.8, // Adjust width if necessary
-                                child: TypeAheadField(
-                                  //   decorationBuilder: (context, child) {
-                                  //   return Icon(Icons.abc);
-                                  // },
-                                  controller: _typeAheadController,
+                                child: Stack(
+                                  alignment: Alignment.centerRight,
+                                  children: [
+                                    TypeAheadField(
+                                      emptyBuilder: (context) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'No supplier found 😕',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        );
+                                      },
+                                      controller: _typeAheadController,
+                                      suggestionsCallback: (pattern) async {
+                                        return await Provider.of<Controller>(
+                                                context,
+                                                listen: false)
+                                            .getSuggestions(pattern);
+                                      },
+                                      itemBuilder: (context, suggestio) {
+                                        // Cast suggestion to Map<String, dynamic>
+                                        final suggestionMap =
+                                            suggestio as Map<String, dynamic>;
 
-                                  suggestionsCallback: (pattern) async {
-                                    return await Provider.of<Controller>(
-                                            context,
-                                            listen: false)
-                                        .getSuggestions(pattern);
-                                  },
-                                  itemBuilder: (context, suggestio) {
-                                    // Cast suggestion to Map<String, dynamic>
-                                    final suggestionMap =
-                                        suggestio as Map<String, dynamic>;
-
-                                    return ListTile(
-                                      title: Text(suggestionMap['acc_code']
-                                          .toString()), // Now accessing the 'acc_name' properly
-                                    );
-                                  },
-                                  onSelected: (suggestion) async {
-                                    if (suggestion != null) {
-                                      final suggestionMap =
-                                          suggestion as Map<String, dynamic>;
-
-                                      // Print the acc_name if the suggestion is not null
-                                      print(
-                                          'Selected Supplier: $suggestionMap');
-
-                                      // Update the TextField with selected supplier
-                                      _typeAheadController.text =
-                                          suggestionMap['acc_code'];
-                                      await Provider.of<Controller>(context,
-                                              listen: false)
-                                          .setSelectedsupplier(suggestionMap);
-                                    }
-                                    // Update selected supplier and text field
-                                    // _typeAheadController.text =
-                                    //     suggestion['acc_name'];
-                                    // value.selectedsuplier =
-                                    //     suggestion['acc_name']; // You can update the selected supplier in your controller
-                                  },
-                                  // noItemsFoundBuilder: (context) => Padding(
-                                  //   padding: const EdgeInsets.all(8.0),
-                                  //   child: Text('No Suppliers Found'),
-                                  // ),
-                                  //  onSelected: (Object? value) {  },
+                                        return ListTile(
+                                          title: Text(
+                                              "${suggestionMap['acc_name'].toString()} - ${suggestionMap['acc_ser_code'].toString()}"), // Now accessing the 'acc_name' properly
+                                        );
+                                      },
+                                      onSelected: (suggestion) async {
+                                        if (suggestion != null) {
+                                          final suggestionMap = suggestion
+                                              as Map<String, dynamic>;
+                                          print(
+                                              'Selected Supplier: $suggestionMap');
+                                          _typeAheadController.text =
+                                              suggestionMap['acc_ser_code'];
+                                          await Provider.of<Controller>(context,
+                                                  listen: false)
+                                              .setSelectedsupplier(
+                                                  suggestionMap);
+                                        }
+                                      },
+                                    ),
+                                    // Clear button
+                                    if (_typeAheadController.text.isNotEmpty)
+                                      Positioned(
+                                        right:
+                                            0, // Position the clear button to the right
+                                        child: IconButton(
+                                          icon: Icon(Icons.clear),
+                                          onPressed: () async {
+                                            SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            setState(() {
+                                              // Provider.of<Controller>(context,
+                                              //         listen: false)
+                                              //     .setSelectedsupplier({});
+                                              prefs.remove("sel_accid");
+                                              prefs.remove("sel_accnm");
+                                              prefs.remove("sel_acccod");
+                                              Provider.of<Controller>(context,
+                                                      listen: false)
+                                                  .selectedsuplier = "";
+                                              Provider.of<Controller>(context,
+                                                      listen: false)
+                                                  .selectedSupplierMap = {};
+                                              _typeAheadController
+                                                  .clear(); // Clear the text field
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -301,6 +328,38 @@ class _MainHomeState extends State<MainHome> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
+                                left: 25, bottom: 11.0, right: 11),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  // color: Colors.yellow,
+                                  width: size.width * 1 / 3.5,
+                                  child: Text(
+                                    "PLACE",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    value.selectedSupplierMap!["acc_ext_place"]
+                                        .toString()
+                                        .trimLeft(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(
                                 top: 11.0, left: 25, bottom: 11.0, right: 11),
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -310,7 +369,7 @@ class _MainHomeState extends State<MainHome> {
                                     // color: Colors.yellow,
                                     width: size.width * 1 / 3.5,
                                     child: Text(
-                                      "Bag Count",
+                                      "No. of Bag",
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -319,8 +378,8 @@ class _MainHomeState extends State<MainHome> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 70,
-                                    height: 45,
+                                    width: 140,
+                                    height: 55,
                                     child: customTextfield(
                                         bagno_ctrl,
                                         1,
@@ -329,58 +388,73 @@ class _MainHomeState extends State<MainHome> {
                                   ),
                                 ]),
                           ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                ),
-                                child: Text(
-                                  "NEXT",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {
-                                  if (value.selectedsuplier != "" &&
-                                      value.selectedsuplier
-                                              .toString()
-                                              .toLowerCase() !=
-                                          "null" &&
-                                      value.selectedsuplier
-                                          .toString()
-                                          .isNotEmpty &&
-                                      value.selectedrut != null &&
-                                      bagno_ctrl.text != "") {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        opaque: false, // set to false
-                                        pageBuilder: (_, __, ___) =>
-                                            BagCountPage(
-                                          bagcount: int.parse(bagno_ctrl.text
-                                              .toString()
-                                              .trim()),
-                                        ),
-                                      ),
-                                    );
-                                  } 
-                                  else 
-                                  {
-                                    CustomSnackbar snak = CustomSnackbar();
-                                    snak.showSnackbar(
-                                        context, "Fill all fields", "");
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                          // SizedBox(
+                          //   height: 30,
+                          // ),
                         ],
                       )
                     : Container(),
               ],
             ),
+          ),
+        ),
+        bottomNavigationBar: Consumer<Controller>(
+          builder: (BuildContext context, Controller value, Widget? child) =>
+              Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 7),
+                child: SizedBox(
+                  height: 60,
+                  width: 120,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "NEXT",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded,
+                            size: 16, color: Colors.white)
+                      ],
+                    ),
+                    onPressed: () {
+                      if (value.selectedsuplier != "" &&
+                          value.selectedsuplier.toString().toLowerCase() !=
+                              "null" &&
+                          value.selectedsuplier.toString().isNotEmpty &&
+                          value.selectedrut != null &&
+                          bagno_ctrl.text != "") {
+                        int bc = int.parse(bagno_ctrl.text.toString().trim());
+                        if (bc > 0) {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              opaque: false, // set to false
+                              pageBuilder: (_, __, ___) => BagCountPage(
+                                bagcount: int.parse(
+                                    bagno_ctrl.text.toString().trim()),
+                              ),
+                            ),
+                          );
+                        } else {
+                          CustomSnackbar snak = CustomSnackbar();
+                          snak.showSnackbar(context,
+                              "No.of bags must be greater than zero", "");
+                        }
+                      } else {
+                        CustomSnackbar snak = CustomSnackbar();
+                        snak.showSnackbar(context, "Fill all fields", "");
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -452,7 +526,6 @@ Future<bool> _onBackPressed(BuildContext context) async {
               Navigator.pop(context);
             },
           ),
-          
         ],
       );
     },

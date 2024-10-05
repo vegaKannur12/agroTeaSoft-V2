@@ -281,14 +281,20 @@ class Controller extends ChangeNotifier {
       url,
       body: body,
     );
+
     print("save body ${body}");
+    print("respons det ${response}");
     print("respons type ${response.runtimeType}");
+    // String jsonsDataString = response.body.toString(); // toString of Response's body is assigned to jsonDataString
+    // var map  = jsonDecode(jsonsDataString);
+
     Map map = jsonDecode(response.body);
     // Map map = {
     //   "flag": 0,
     //   "msg": "Insertion Done",
     //   "ret_arr": {2: "AB16", 3: "AB17"}
     // };
+
     print("save ResultMap--> $map");
     if (map['flag'] == 0) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -724,6 +730,7 @@ class Controller extends ChangeNotifier {
     prefs.setInt("sel_accid", selsupplier["acid"]);
     prefs.setString("sel_accnm", selsupplier["acc_name"]);
     prefs.setString("sel_acccod", selsupplier["acc_code"]);
+    prefs.setString("sel_accplc", selsupplier["acc_ext_place"]);
 
     print("sel supplier---$selectedsuplier, ${selsupplier["acid"]}");
     notifyListeners();
@@ -732,17 +739,18 @@ class Controller extends ChangeNotifier {
   Future<AccountMasterModel?> getACMasterDetails(int index, String page) async {
     // print("cid...............${cid}");
     try {
+      // Uri url = Uri.parse("http://192.168.18.168:7000/api/load_suppliers");
       Uri url = Uri.parse("http://teasoft.trafiqerp.in/api/load_suppliers");
       // // SharedPreferences prefs = await SharedPreferences.getInstance();
       // // String? br_id1 = prefs.getString("br_id");
       Map body = {'cid': " "};
       downloading[index] = true;
-
       // print("compny----${cid}");
       http.Response response = await http.post(
         url,
         body: body,
       );
+      
       print("body ${body}");
       var map = jsonDecode(response.body);
       print("mapsuppli ${map}");
@@ -794,16 +802,21 @@ class Controller extends ChangeNotifier {
   }
 
   getSuggestions(String query) {
-    // List<Map<String, dynamic>>? matches;
-    // filteredlist = spplierList;
-    filteredlist = spplierList
-        .where((e) => e["acc_code"]
-            .toString()
-            .toLowerCase()
-            .contains(query.toLowerCase()))
-        .toList();
-    notifyListeners();
-    // matches.retainWhere((s) =>   s.toLowerCase().contains(query.toLowerCase()));
+    // filteredlist = spplierList
+    //     .where((e) => e["acc_ser_code"]
+    //         .toString()
+    //         .toLowerCase()
+    //         .contains(query.toLowerCase()))
+    //     .toList();
+    // notifyListeners();
+    filteredlist = spplierList.where((e) {
+      String accSerCode = e["acc_ser_code"].toString().toLowerCase();
+      String accName = e["acc_name"].toString().toLowerCase();
+
+      return accSerCode.contains(query.toLowerCase()) ||
+          accName.contains(query.toLowerCase());
+    }).toList();
+    // //matches.retainWhere((s) =>   s.toLowerCase().contains(query.toLowerCase()));
     return filteredlist;
   }
 
@@ -812,14 +825,16 @@ class Controller extends ChangeNotifier {
     try {
       filteredlist.clear();
       spplierList.clear();
+      notifyListeners();
       List accList = await TeaDB.instance.getSupplierListfromDB(rid!);
-      print("accList----${accList}");
+      print("accList----$accList");
       spplierList.clear();
+      notifyListeners();
       for (var item in accList) {
         spplierList.add(item);
       }
       filteredlist = spplierList;
-      print("added to supplierList----${spplierList}");
+      print("added to supplierList----$spplierList");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -834,6 +849,7 @@ class Controller extends ChangeNotifier {
     prefs.remove("sel_pronm");
     prefs.remove("sel_accid");
     prefs.remove("sel_accnm");
+    prefs.remove("sel_accplc");
     selectedSupplierMap = {};
     selectedsuplier = "";
 
@@ -856,7 +872,8 @@ class Controller extends ChangeNotifier {
       }
       selectedPro = prodList[0];
       prefs.setInt("sel_proid", selectedPro!["pid"]);
-      prefs.setString("sel_pronm", selectedPro!["product"].toString().trimLeft());
+      prefs.setString(
+          "sel_pronm", selectedPro!["product"].toString().trimLeft());
 
       // var lengthh = prodList.length;
       // colected = List.generate(lengthh, (index) => TextEditingController());

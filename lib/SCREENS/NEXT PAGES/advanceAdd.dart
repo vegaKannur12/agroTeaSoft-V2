@@ -240,127 +240,144 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                              ),
-                              child: Text(
-                                "ADD ADVANCE",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () async {
-                                if (adv_amt_ctrl.text.isNotEmpty && adv_amt_ctrl.text!="") {
-                                  
-                                
-                                int max = await TeaDB.instance
-                                    .getMaxCommonQuery(
-                                        'AdvanceTable', 'trans_id', " ");
-                                print("int max---- $max");
+                            SizedBox(
+                              height: 60,
+                              width: 150,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                  ),
+                                  child: Text(
+                                    "ADD ADVANCE",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onPressed: () async {
+                                    if (adv_amt_ctrl.text.isNotEmpty &&
+                                        adv_amt_ctrl.text != "") {
+                                      int max = await TeaDB.instance
+                                          .getMaxCommonQuery(
+                                              'AdvanceTable', 'trans_id', " ");
+                                      print("int max---- $max");
 
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.setString("log_date", date.toString());
-                                int? rutid = prefs.getInt("sel_rootid");
-                                int? supId = prefs.getInt("sel_accid");
-                                String? supName = prefs.getString("sel_accnm");
-                                String? ts = prefs.getString("t_series");
-                                print(
-                                    "supl id: $supId , supName: $supName , tseris: $ts");
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.setString(
+                                          "log_date", date.toString());
+                                      int? rutid = prefs.getInt("sel_rootid");
+                                      int? supId = prefs.getInt("sel_accid");
+                                      String? supName =
+                                          prefs.getString("sel_accnm");
+                                      String? ts = prefs.getString("t_series");
+                                      print(
+                                          "supl id: $supId , supName: $supName , tseris: $ts");
 
-                                value.advanceMasterMap["trans_id"] = max;
-                                value.advanceMasterMap["adv_series"] = ts;
-                                value.advanceMasterMap["adv_date"] =
-                                    date.toString();
+                                      value.advanceMasterMap["trans_id"] = max;
+                                      value.advanceMasterMap["adv_series"] = ts;
+                                      value.advanceMasterMap["adv_date"] =
+                                          date.toString();
 
-                                // transactDate;
-                                value.advanceMasterMap["adv_route_id"] =
-                                    rutid.toString();
-                                value.advanceMasterMap["adv_party_id"] =
-                                    supId.toString();
-                                value.advanceMasterMap["adv_party_name"] =
-                                    supName.toString();
-                                value.advanceMasterMap["adv_pay_mode"] = "1";
-                                value.advanceMasterMap["adv_pay_acc"] = "";
-                                value.advanceMasterMap["adv_amt"] =
-                                    adv_amt_ctrl.text.toString();
-                                value.advanceMasterMap["adv_narration"] =
-                                    adv_narratn_ctrl.text.toString();
-                                value.advanceMasterMap["adv_acc_date"] =
-                                    dateInput.text.toString();
-                                // "25,21,65,985";
-                                value.advanceMasterMap["adv_import_id"] = "0";
-                                value.advanceMasterMap["company_id"] =
-                                    c_id.toString();
-                                value.advanceMasterMap["branch_id"] =
-                                    br_id.toString();
-                                value.advanceMasterMap["log_date"] =
-                                    date.toString();
-                                value.advanceMasterMap["status"] = 0;
+                                      // transactDate;
+                                      value.advanceMasterMap["adv_route_id"] =
+                                          rutid.toString();
+                                      value.advanceMasterMap["adv_party_id"] =
+                                          supId.toString();
+                                      value.advanceMasterMap["adv_party_name"] =
+                                          supName.toString();
+                                      value.advanceMasterMap["adv_pay_mode"] =
+                                          "1";
+                                      value.advanceMasterMap["adv_pay_acc"] =
+                                          "";
+                                      value.advanceMasterMap["adv_amt"] =
+                                          adv_amt_ctrl.text.toString();
+                                      value.advanceMasterMap["adv_narration"] =
+                                          adv_narratn_ctrl.text.toString();
+                                      value.advanceMasterMap["adv_acc_date"] =
+                                          dateInput.text.toString();
+                                      // "25,21,65,985";
+                                      value.advanceMasterMap["adv_import_id"] =
+                                          "0";
+                                      value.advanceMasterMap["company_id"] =
+                                          c_id.toString();
+                                      value.advanceMasterMap["branch_id"] =
+                                          br_id.toString();
+                                      value.advanceMasterMap["log_date"] =
+                                          date.toString();
+                                      value.advanceMasterMap["status"] = 0;
 
-                                await Provider.of<Controller>(context,
-                                        listen: false)
-                                    .insertAdvancetoDB(value.advanceMasterMap);
-                                print(
-                                    "advanceMasterMap---> ${value.advanceMasterMap}");
-                                Fluttertoast.showToast(
-                                    backgroundColor: Colors.green,
-                                    msg: "Advance Added",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    textColor: Colors.black,
-                                    fontSize: 16.0);
-                                adv_amt_ctrl.clear();
-                                adv_narratn_ctrl.clear();
-                                // dateInput.clear();
-                                savedate = "";
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
+                                      await Provider.of<Controller>(context,
+                                              listen: false)
+                                          .insertAdvancetoDB(
+                                              value.advanceMasterMap);
+                                      print(
+                                          "advanceMasterMap---> ${value.advanceMasterMap}");
+                                      Fluttertoast.showToast(
+                                          backgroundColor: Colors.green,
+                                          msg: "Advance Added",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          textColor: Colors.black,
+                                          fontSize: 16.0);
+                                      adv_amt_ctrl.clear();
+                                      adv_narratn_ctrl.clear();
+                                      // dateInput.clear();
+                                      savedate = "";
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                            opaque: false, // set to false
+                                            pageBuilder: (_, __, ___) =>
+                                                FinalSavePage(
+                                                  total:
+                                                      widget.total.toString(),
+                                                  damage:
+                                                      widget.damage.toString(),
+                                                  nettotal: widget.nettotal
+                                                      .toString(),
+                                                  bagcount: widget.bagcount
+                                                      .toString(),
+                                                  weightString: widget
+                                                      .weightString
+                                                      .toString(),
+                                                  remarks:
+                                                      widget.remarks.toString(),
+                                                )),
+                                      );
+                                    } else {
+                                      CustomSnackbar snak = CustomSnackbar();
+                                      snak.showSnackbar(
+                                          context, "Enter Advance Amount", "");
+                                    }
+                                  }),
+                            ),
+                            SizedBox(
+                              height: 60,
+                              width: 150,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                ),
+                                child: Text(
+                                  "NO ADVANCE",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  Navigator.of(context).push(
+                                    PageRouteBuilder(
                                       opaque: false, // set to false
                                       pageBuilder: (_, __, ___) =>
                                           FinalSavePage(
-                                            total: widget.total.toString(),
-                                            damage: widget.damage.toString(),
-                                            nettotal:
-                                                widget.nettotal.toString(),
-                                            bagcount:
-                                                widget.bagcount.toString(),
-                                            weightString:
-                                                widget.weightString.toString(),
-                                            remarks: widget.remarks.toString(),
-                                          )),
-                                );
-                              }
-                              else{
-                               CustomSnackbar snak = CustomSnackbar();
-                              snak.showSnackbar(context, "Enter Advance Amount", "");
-
-                              }
-  }
-                            ),
-                            TextButton(
-                              child: Text(
-                                "Skip",
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.blue),
-                              ),
-                              onPressed: () async {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    opaque: false, // set to false
-                                    pageBuilder: (_, __, ___) => FinalSavePage(
-                                      total: widget.total.toString(),
-                                      damage: widget.damage.toString(),
-                                      nettotal: widget.nettotal.toString(),
-                                      bagcount: widget.bagcount.toString(),
-                                      weightString:
-                                          widget.weightString.toString(),
-                                      remarks: widget.remarks.toString(),
+                                        total: widget.total.toString(),
+                                        damage: widget.damage.toString(),
+                                        nettotal: widget.nettotal.toString(),
+                                        bagcount: widget.bagcount.toString(),
+                                        weightString:
+                                            widget.weightString.toString(),
+                                        remarks: widget.remarks.toString(),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
