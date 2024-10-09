@@ -4,6 +4,7 @@ import 'package:tsupply/CONTROLLER/controller.dart';
 import 'package:tsupply/SCREENS/AUTH/login.dart';
 import 'package:tsupply/SCREENS/AUTH/registr.dart';
 import 'package:tsupply/SCREENS/COLLECTION/collection.dart';
+import 'package:tsupply/SCREENS/NEXT%20PAGES/bagcountPage.dart';
 import 'package:tsupply/SCREENS/splashscreen.dart';
 
 Future<void> main() async {
@@ -28,10 +29,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,  
       ),
-      home: SplashScreen(),
+      home: 
+      SplashScreen(),
       // CollectionPage()
       // USERLogin(),
       // Registration(),
+      // BagCountPage()
     );
   }
 }

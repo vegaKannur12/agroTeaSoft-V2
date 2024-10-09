@@ -246,16 +246,16 @@ class TeaDB {
     return list;
   }
 
-  Future<List<Map<String, dynamic>>> getSupplierListfromDB(int? rid) async {
-    print("rid----> $rid");
+  Future<List<Map<String, dynamic>>> getSupplierListfromDB(String? serid) async {
+    print("rid----> $serid");
     List<Map<String, dynamic>> list = [];
     Database db = await instance.database;
-    if (rid == " ") {
+    if (serid == "" || serid!.isEmpty || serid.toString().toLowerCase()=="null") {
       list = await db.rawQuery(
           'SELECT acid,acc_code,acc_name,route,acc_ser_code,acc_ext_place FROM accountMasterTable where acc_master_type="SU"');
     } else {
       list = await db.rawQuery(
-          'SELECT acid,acc_code,acc_name,route,acc_ser_code,acc_ext_place FROM accountMasterTable where route ="$rid" and acc_master_type="SU"');
+          'SELECT acid,acc_code,acc_name,route,acc_ser_code,acc_ext_place FROM accountMasterTable where acc_ser_code ="$serid" and acc_master_type="SU"');
     }
     return list;
   }

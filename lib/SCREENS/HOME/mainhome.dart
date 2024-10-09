@@ -31,13 +31,16 @@ class _MainHomeState extends State<MainHome> {
   int? c_id;
   TextEditingController dateInput = TextEditingController();
   DialogSupplier supdio = DialogSupplier();
-  DialogRoutee rutdio = DialogRoutee();
+  // DialogRoutee rutdio = DialogRoutee();
   TextEditingController bagno_ctrl = TextEditingController();
-  final TextEditingController _typeAheadController = TextEditingController();
+  TextEditingController supCode_ctrl = TextEditingController();
+  String? errorText = "gg";
+  // final TextEditingController _typeAheadController = TextEditingController();
   @override
   void initState() {
     super.initState();
     Provider.of<Controller>(context, listen: false).geTseries();
+
     getSharedpref();
     // getedit();
     dateInput.text = "";
@@ -58,6 +61,7 @@ class _MainHomeState extends State<MainHome> {
     uname = prefs.getString("uname");
     upwd = prefs.getString("upwd");
     // ts = prefs.getString("t_series");
+    await Provider.of<Controller>(context, listen: false).getSupplierfromDB("");
   }
 
   @override
@@ -115,40 +119,34 @@ class _MainHomeState extends State<MainHome> {
                       SizedBox(
                         height: size.height * 0.05,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 11.0, left: 11, right: 11),
-                        child: Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisAlignment: MainAxisAlignment.end,
+                      Container(
+                        color: Color.fromARGB(255, 193, 213, 252),
+                        child: Column(
                           children: [
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                IconButton(
-                                    onPressed: () {
-                                      rutdio.showRouteDialog(context);
-                                    },
-                                    icon: Icon(
-                                      Icons.location_on_outlined,
-                                      color: Colors.black,
-                                    )),
-                                Container(
-                                  child: Text(
-                                    value.selectedrut == null
-                                        ? "Choose Route"
-                                        : value.selectedrut!.toUpperCase(),
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 18),
+                                Text(
+                                  "Enter Supplier Code",
+                                  style: TextStyle(
+                                    color: Colors.purple,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25,
                                   ),
                                 )
                               ],
+                            ),
+                            SizedBox(
+                              height: size.height * 0.02,
                             ),
                           ],
                         ),
                       ),
                       SizedBox(
-                        height: size.height * 0.04,
+                        height: size.height * 0.10,
                       ),
                     ],
                   ),
@@ -173,84 +171,64 @@ class _MainHomeState extends State<MainHome> {
                               Container(
                                 width: size.width *
                                     0.8, // Adjust width if necessary
-                                child: Stack(
-                                  alignment: Alignment.centerRight,
-                                  children: [
-                                    TypeAheadField(
-                                      emptyBuilder: (context) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'No supplier found 😕',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                        );
-                                      },
-                                      controller: _typeAheadController,
-                                      suggestionsCallback: (pattern) async {
-                                        return await Provider.of<Controller>(
-                                                context,
-                                                listen: false)
-                                            .getSuggestions(pattern);
-                                      },
-                                      itemBuilder: (context, suggestio) {
-                                        // Cast suggestion to Map<String, dynamic>
-                                        final suggestionMap =
-                                            suggestio as Map<String, dynamic>;
+                                child: TextFormField(
+                                  onChanged: (value) {
+                                    if (supCode_ctrl.text.toString().isEmpty) {
+                                      errorText = "";
+                                    }
+                                  },
+                                  onTapOutside: (event) async {
+                                    if (supCode_ctrl.text != "" ||
+                                        supCode_ctrl.text
+                                            .toString()
+                                            .isNotEmpty) {
+                                      await Provider.of<Controller>(context,
+                                              listen: false)
+                                          .getSupplierfromDB(supCode_ctrl.text
+                                              .toString()
+                                              .trim());
 
-                                        return ListTile(
-                                          title: Text(
-                                              "${suggestionMap['acc_name'].toString()} - ${suggestionMap['acc_ser_code'].toString()}"), // Now accessing the 'acc_name' properly
-                                        );
-                                      },
-                                      onSelected: (suggestion) async {
-                                        if (suggestion != null) {
-                                          final suggestionMap = suggestion
-                                              as Map<String, dynamic>;
-                                          print(
-                                              'Selected Supplier: $suggestionMap');
-                                          _typeAheadController.text =
-                                              suggestionMap['acc_ser_code'];
-                                          await Provider.of<Controller>(context,
-                                                  listen: false)
-                                              .setSelectedsupplier(
-                                                  suggestionMap);
-                                        }
-                                      },
-                                    ),
-                                    // Clear button
-                                    if (_typeAheadController.text.isNotEmpty)
-                                      Positioned(
-                                        right:
-                                            0, // Position the clear button to the right
-                                        child: IconButton(
-                                          icon: Icon(Icons.clear),
-                                          onPressed: () async {
-                                            SharedPreferences prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            setState(() {
-                                              // Provider.of<Controller>(context,
-                                              //         listen: false)
-                                              //     .setSelectedsupplier({});
-                                              prefs.remove("sel_accid");
-                                              prefs.remove("sel_accnm");
-                                              prefs.remove("sel_acccod");
-                                              Provider.of<Controller>(context,
-                                                      listen: false)
-                                                  .selectedsuplier = "";
-                                              Provider.of<Controller>(context,
-                                                      listen: false)
-                                                  .selectedSupplierMap = {};
-                                              _typeAheadController
-                                                  .clear(); // Clear the text field
-                                            });
-                                          },
+                                      if (value.spplierList.isNotEmpty) {
+                                        errorText = "";
+                                        print("suplier found");
+                                        print("sup --${value.spplierList}");
+                                      } else {
+                                        errorText = "Supplier Not Found..";
+                                        CustomSnackbar snak = CustomSnackbar();
+                                        snak.showSnackbar(context,
+                                            "Supplier Not Found..", "");
+                                      }
+                                    }
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  controller: supCode_ctrl,
+                                  maxLines: 1,
+                                  decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: const Color.fromARGB(
+                                              255, 199, 198, 198),
                                         ),
                                       ),
-                                  ],
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: const Color.fromARGB(
+                                              255, 199, 198, 198),
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                          color: Colors.black,
+                                          width: 3,
+                                        ),
+                                      ),
+                                      hintText: ""),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ],
@@ -258,203 +236,100 @@ class _MainHomeState extends State<MainHome> {
                     ],
                   ),
                 ),
-                value.selectedSupplierMap != null &&
-                        value.selectedSupplierMap!.isNotEmpty
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 7.0, left: 58, bottom: 11.0, right: 11),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 11.0, left: 25, bottom: 3, right: 11),
-                            child: Row(
-                                // crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    // color: Colors.yellow,
-                                    width: size.width * 1 / 3.5,
-                                    child: Text(
-                                      "ACC CODE",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      value.selectedSupplierMap!["acc_code"]
-                                          .toString()
-                                          .trimLeft(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
+                          Text(
+                            errorText.toString(),
+                            style: TextStyle(color: Colors.red),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, bottom: 11.0, right: 11),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  // color: Colors.yellow,
-                                  width: size.width * 1 / 3.5,
-                                  child: Text(
-                                    "ACC NAME",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    value.selectedSupplierMap!["acc_name"]
-                                        .toString()
-                                        .trimLeft(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, bottom: 11.0, right: 11),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  // color: Colors.yellow,
-                                  width: size.width * 1 / 3.5,
-                                  child: Text(
-                                    "PLACE",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    value.selectedSupplierMap!["acc_ext_place"]
-                                        .toString()
-                                        .trimLeft(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 11.0, left: 25, bottom: 11.0, right: 11),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    // color: Colors.yellow,
-                                    width: size.width * 1 / 3.5,
-                                    child: Text(
-                                      "No. of Bag",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 140,
-                                    height: 55,
-                                    child: customTextfield(
-                                        bagno_ctrl,
-                                        1,
-                                        TextInputType.number,
-                                        (String value) {}),
-                                  ),
-                                ]),
-                          ),
-                          // SizedBox(
-                          //   height: 30,
-                          // ),
                         ],
-                      )
-                    : Container(),
-              ],
-            ),
-          ),
-        ),
-        bottomNavigationBar: Consumer<Controller>(
-          builder: (BuildContext context, Controller value, Widget? child) =>
-              Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 7),
-                child: SizedBox(
-                  height: 60,
-                  width: 120,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "NEXT",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Icon(Icons.arrow_forward_ios_rounded,
-                            size: 16, color: Colors.white)
-                      ],
-                    ),
-                    onPressed: () {
-                      if (value.selectedsuplier != "" &&
-                          value.selectedsuplier.toString().toLowerCase() !=
-                              "null" &&
-                          value.selectedsuplier.toString().isNotEmpty &&
-                          value.selectedrut != null &&
-                          bagno_ctrl.text != "") {
-                        int bc = int.parse(bagno_ctrl.text.toString().trim());
-                        if (bc > 0) {
-                          Navigator.of(context).push(
-                            PageRouteBuilder(
-                              opaque: false, // set to false
-                              pageBuilder: (_, __, ___) => BagCountPage(
-                                bagcount: int.parse(
-                                    bagno_ctrl.text.toString().trim()),
-                              ),
-                            ),
-                          );
-                        } else {
-                          CustomSnackbar snak = CustomSnackbar();
-                          snak.showSnackbar(context,
-                              "No.of bags must be greater than zero", "");
-                        }
-                      } else {
-                        CustomSnackbar snak = CustomSnackbar();
-                        snak.showSnackbar(context, "Fill all fields", "");
-                      }
-                    },
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 7, top: 65),
+                      child: SizedBox(
+                        height: 60,
+                        width: 120,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "NEXT",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Icon(Icons.arrow_forward_ios_rounded,
+                                  size: 16, color: Colors.white)
+                            ],
+                          ),
+                          onPressed: () async {
+                            if (supCode_ctrl.text != "" ||
+                                supCode_ctrl.text.toString().isNotEmpty) {
+                              await Provider.of<Controller>(context,
+                                      listen: false)
+                                  .getSupplierfromDB(
+                                      supCode_ctrl.text.toString().trim());
+
+                              if (value.spplierList.isNotEmpty) {
+                                errorText = "";
+                                print("suplier found");
+                                print("sup --${value.spplierList}");
+                                await Provider.of<Controller>(context,
+                                        listen: false)
+                                    .setSelectedsupplier(value.spplierList[0]);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        ChangeNotifierProvider.value(
+                                      value: context.read<
+                                          Controller>(), // Pass the existing instance
+                                      child: BagCountPage(),
+                                    ),
+                                  ),
+                                );
+                                // Navigator.of(context).push(
+                                //   PageRouteBuilder(
+                                //     opaque: false, // set to false
+                                //     pageBuilder: (_, __, ___) => BagCountPage(
+                                //       // bagcount: int.parse(
+                                //       //     bagno_ctrl.text.toString().trim()),
+                                //     ),
+                                //   ),
+                                // );
+                              } else {
+                                errorText = "Supplier Not Found..";
+                                CustomSnackbar snak = CustomSnackbar();
+                                snak.showSnackbar(
+                                    context, "Supplier Not Found..", "");
+                              }
+                            } else {
+                              errorText = "";
+                              CustomSnackbar snak = CustomSnackbar();
+                              snak.showSnackbar(
+                                  context, "Enter Supplier Code", "");
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

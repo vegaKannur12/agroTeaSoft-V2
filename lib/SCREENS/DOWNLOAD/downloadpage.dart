@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tsupply/CONTROLLER/controller.dart';
 import 'package:tsupply/SCREENS/DRAWER/customdrawer.dart';
 import 'dart:io';
+
 class DownLoadPage extends StatefulWidget {
   const DownLoadPage({super.key});
 
@@ -33,14 +34,15 @@ class _DownLoadPageState extends State<DownLoadPage> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.teal,
-      
+
             // title: Text("Company Details",style: TextStyle(fontSize: 20),),
           ),
           drawer: CustomDrawer(),
           body: SingleChildScrollView(
             child: Consumer<Controller>(
-              builder: (BuildContext context, Controller value, Widget? child) =>
-                  Column(
+              builder:
+                  (BuildContext context, Controller value, Widget? child) =>
+                      Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -68,8 +70,18 @@ class _DownLoadPageState extends State<DownLoadPage> {
                                 onPressed: value.downloading[index]
                                     ? null // Disable the button while downloading
                                     : () {
+                                        //    if (value.downloadItems[index] ==
+                                        //     "Download All") {
+                                        //   // Provider.of<Controller>(context,
+                                        //   //         listen: false)
+                                        //   //     .getRouteDetails(
+                                        //   //         index, "", context);
+                                        // }
+                                        //  else
                                         if (value.downloadItems[index] ==
-                                            "Route") {
+                                            "Route") 
+                                        
+                                        {
                                           Provider.of<Controller>(context,
                                                   listen: false)
                                               .getRouteDetails(
@@ -127,7 +139,6 @@ class _DownLoadPageState extends State<DownLoadPage> {
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white),
                       child: ListTile(
-                      
                         title: Center(
                             child: Text(
                           "Upload Collection ( ${value.importtransMasterList.length} )",
@@ -137,33 +148,35 @@ class _DownLoadPageState extends State<DownLoadPage> {
                         trailing: IconButton(
                           onPressed: value.colluploading
                               ? null // Disable the button while downloading
-                              : () async{
-                                 await Provider.of<Controller>(context,
-                                  listen: false) // import code to be uncommented
-                              .importFinal(context);
-                        },
-                        icon:
-                        value.colluploading
-                            ? SizedBox(
-                                height:25,width: 25,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.0,
-                                  color: Colors.black,
-                                ),
-                              )
-                            : value.colluploaded
-                                ? Icon(
-                                    Icons.done,
-                                    color: Colors.green,
-                                  )
-                                : Icon(
-                                    Icons.upload,
-                                    color: Colors.red,
+                              : () async {
+                                  await Provider.of<Controller>(context,
+                                          listen:
+                                              false) // import code to be uncommented
+                                      .importFinal(context);
+                                },
+                          icon: value.colluploading
+                              ? SizedBox(
+                                  height: 25,
+                                  width: 25,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                    color: Colors.black,
                                   ),
+                                )
+                              : value.colluploaded
+                                  ? Icon(
+                                      Icons.done,
+                                      color: Colors.green,
+                                    )
+                                  : Icon(
+                                      Icons.upload,
+                                      color: Colors.red,
+                                    ),
+                        ),
                       ),
                     ),
-                  ),),
-                   Padding(
+                  ),
+                  Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Ink(
                       decoration: BoxDecoration(
@@ -171,7 +184,6 @@ class _DownLoadPageState extends State<DownLoadPage> {
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white),
                       child: ListTile(
-                      
                         title: Center(
                             child: Text(
                           "Upload Advance ( ${value.importAdvanceList.length} )",
@@ -181,32 +193,34 @@ class _DownLoadPageState extends State<DownLoadPage> {
                         trailing: IconButton(
                           onPressed: value.advuploading
                               ? null // Disable the button while downloading
-                              : () async{
-                                 await Provider.of<Controller>(context,
-                                  listen: false) // import code to be uncommented
-                              .importAdvanceFinal(context);
-                        },
-                        icon:
-                        value.advuploading
-                            ? SizedBox(
-                                height:25,width: 25,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.0,
-                                  color: Colors.black,
-                                ),
-                              )
-                            : value.advuploaded
-                                ? Icon(
-                                    Icons.done,
-                                    color: Colors.green,
-                                  )
-                                : Icon(
-                                    Icons.upload,
-                                    color: Colors.red,
+                              : () async {
+                                  await Provider.of<Controller>(context,
+                                          listen:
+                                              false) // import code to be uncommented
+                                      .importAdvanceFinal(context);
+                                },
+                          icon: value.advuploading
+                              ? SizedBox(
+                                  height: 25,
+                                  width: 25,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                    color: Colors.black,
                                   ),
+                                )
+                              : value.advuploaded
+                                  ? Icon(
+                                      Icons.done,
+                                      color: Colors.green,
+                                    )
+                                  : Icon(
+                                      Icons.upload,
+                                      color: Colors.red,
+                                    ),
+                        ),
                       ),
                     ),
-                  ),)
+                  )
                 ],
               ),
             ),
@@ -214,6 +228,7 @@ class _DownLoadPageState extends State<DownLoadPage> {
     );
   }
 }
+
 Future<bool> _onBackPressed(BuildContext context) async {
   return await showDialog(
     context: context,

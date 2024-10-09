@@ -148,7 +148,7 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 padding: EdgeInsets.all(10),
                                 // color: Colors.yellow,
                                 width: size.width * 1 / 3.5,
-                                child: Text("DAMAGE")),
+                                child: Text("BAG WEIGHT")),
                             SizedBox(
                                 width: 200,
                                 height: 55,
@@ -192,6 +192,53 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                           ],
                         ),
                       ),
+                       Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                // color: Colors.yellow,
+                                width: size.width * 1 / 3.5,
+                                child: Text("MOISTURE")),
+                            SizedBox(
+                              width: 140,
+                              height: 55,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: DropdownButton<Map<String, dynamic>>(
+                          hint: Text("Select Route"),
+                          value: value.selectedwgt,
+                          onChanged: (Map<String, dynamic>? newValue) async {
+                            setState(() {
+                              value.selectedwgt = newValue;
+                              print("selected root---${value.selectedwgt}");
+                            });
+                            // await Provider.of<Controller>(context, listen: false)
+                            //     .setSelectedroute(selectedRoute!);
+                          },
+                          items: value.perKgList
+                              .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                  (Map<String, dynamic> pk) {
+                            return DropdownMenuItem<Map<String, dynamic>>(
+                              value: pk,
+                              child: Text(pk['type']),
+                            );
+                          }).toList(),
+                        ),
+                              ),
+                            ),
+
+                            // SizedBox(
+                            //     height: 60,
+                            //     width: 60,
+                            //     child: customTextfield(nettot_ctrl, 1,
+                            //         TextInputType.number, (String value) {}),)
+                          ],
+                        ),
+                      ),
+                    
                       SizedBox(
                         height: size.height * 0.01,
                       ),
@@ -227,24 +274,25 @@ class _DamageNRemarkState extends State<DamageNRemark> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-           padding: EdgeInsets.only(right: 7),
-            child: SizedBox(height: 60,
-                  width: 120,
+            padding: EdgeInsets.only(right: 7),
+            child: SizedBox(
+              height: 60,
+              width: 120,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                 ),
                 child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "NEXT",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Icon(Icons.arrow_forward_ios_rounded,
-                            size: 16, color: Colors.white)
-                      ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "NEXT",
+                      style: TextStyle(color: Colors.white),
                     ),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        size: 16, color: Colors.white)
+                  ],
+                ),
                 onPressed: () {
                   Navigator.of(context).push(
                     PageRouteBuilder(

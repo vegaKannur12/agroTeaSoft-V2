@@ -162,15 +162,15 @@ class _AdvanceListState extends State<AdvanceList>
                                                   .setEditAdvList(list[index]);
                                               // value.editColctMap = list[index];..
                                               print("edit adv Map-> ${value.editAdvnceMap}");
-                                              Navigator.of(context).push(
-                                                PageRouteBuilder(
-                                                    opaque:
-                                                        false, // set to false
-                                                    pageBuilder: (_, __, ___) =>
-                                                        CollectionPage(
-                                                            frompage:
-                                                                "advedit")),
-                                              );
+                                              // Navigator.of(context).push(
+                                              //   PageRouteBuilder(
+                                              //       opaque:
+                                              //           false, // set to false
+                                              //       pageBuilder: (_, __, ___) =>
+                                              //           CollectionPage(
+                                              //               frompage:
+                                              //                   "advedit")),
+                                              // );
                                             },
                                           ),
                                           IconButton(

@@ -212,14 +212,14 @@ class _CollectionListState extends State<CollectionList>
                                               print(
                                                   "edit colect Map-> ${value.editColctMap}");
 
-                                              Navigator.of(context).push(
-                                                PageRouteBuilder(
-                                                    opaque:
-                                                        false, // set to false
-                                                    pageBuilder: (_, __, ___) =>
-                                                        CollectionPage(
-                                                            frompage: "edit")),
-                                              );
+                                              // Navigator.of(context).push(
+                                              //   PageRouteBuilder(
+                                              //       opaque:
+                                              //           false, // set to false
+                                              //       pageBuilder: (_, __, ___) =>
+                                              //           CollectionPage(
+                                              //               frompage: "edit")),
+                                              // );
                                             },
                                           ),
                                           IconButton(

@@ -256,7 +256,8 @@ class _USERLoginState extends State<USERLogin> {
                           SizedBox(
                             height: 20,
                           ),
-                          SizedBox(height: 60,width: 140,
+                          SizedBox(
+                            height: 60,width: 140,
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue),

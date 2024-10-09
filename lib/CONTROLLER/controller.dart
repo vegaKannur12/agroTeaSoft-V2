@@ -85,6 +85,7 @@ class Controller extends ChangeNotifier {
   bool advuploading = false;
   String? rootnmforEdit;
   List<String> downloadItems = [
+    // "Download All",
     "Route",
     "Supplier Details",
     "Product Details",
@@ -98,10 +99,154 @@ class Controller extends ChangeNotifier {
   bool isSearch = false;
   double? totalcollected = 0.0;
   Map<String, dynamic>? selectedPro;
+
+  List<Widget> bagRows = [];
+  List<Widget> donRows = [];
+  List<TextEditingController> controllers = [];
+  // List<Map<TextEditingController, bool>> controllers = [];
+  // List<bool> isDoneEnabled = [];
+  List<ValueNotifier<bool>> isDoneEnabled = [];
+  int currentBagCount = 1;
+  List<Map<String, dynamic>> perKgList = [
+    {"idd": 1, "type": "Percentage"},
+    {"idd": 2, "type": "KG"}
+  ];
+  Map<String, dynamic>? selectedwgt = {"idd": 1, "type": "Percentage"};
+
   setdownflag() {
     downlooaded = List.generate(downloadItems.length, (index) => false);
     downloading = List.generate(downloadItems.length, (index) => false);
     notifyListeners();
+  }
+
+  addNewBagRow(BuildContext context) async {
+    TextEditingController newController = TextEditingController();
+    controllers.add(newController);
+    ValueNotifier<bool> doneNotifier = ValueNotifier(false);
+    isDoneEnabled.add(doneNotifier);
+    bool isRowCompleted = false;
+    notifyListeners();
+    bagRows.add(
+      Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Text(
+              " Bag $currentBagCount  ",
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(
+              width: 140,
+              height: 55,
+              child: TextFormField(
+                onChanged: (valu) async {
+                  // When the input is valid, enable the "done" button
+                  if (valu.toString().isNotEmpty &&
+                      int.tryParse(valu.toString()) != null &&
+                      int.parse(valu.toString()) > 0) {
+                    if (!isRowCompleted) {
+                      print("-------------val>0");
+                      doneNotifier.value = true;
+                      // await setIsDoneEnable(true, newController);
+                      notifyListeners();
+                    }
+                  } else {
+                    print("-------------val=====0");
+                    doneNotifier.value = false;
+                    if (valu.toString().isNotEmpty &&
+                        int.tryParse(valu.toString()) != null &&
+                        int.parse(valu.toString()) < 0) {
+                      CustomSnackbar snackbar = CustomSnackbar();
+                      snackbar.showSnackbar(
+                          context, "Weight must be greater than zero", "");
+                    }
+                    // await setIsDoneEnable(false, newController);
+                    notifyListeners();
+                  }
+                },
+                controller: newController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Bag $currentBagCount',
+                ),
+              ),
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: doneNotifier,
+              builder: (context, value, child) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.done,
+                    color: value
+                        ? Colors.green
+                        : Colors.grey, // Button is greyed out when disabled
+                  ),
+                  onPressed: value
+                      ? () async {
+                          isRowCompleted = true;
+                          await onDonePressed(context);
+                          doneNotifier.value = false;
+                          // await setIsDoneEnable(false, newController);
+                          notifyListeners();
+                        }
+                      : null, // Call when "done" button is pressed
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Refresh the UI to display the new row
+    currentBagCount++; // Increment the bag count for the next row
+    notifyListeners();
+  }
+
+  // setIsDoneEnable(bool val, TextEditingController newController) {
+  //   isDoneEnabled[controllers.indexOf(newController)] = val;
+
+  //   notifyListeners();
+  //   print(
+  //       "--done ?-------------${isDoneEnabled[controllers.indexOf(newController)]}");
+  // }
+
+  onDonePressed(BuildContext context) {
+    addNewBagRow(
+        context); // Add a new bag row (TextFormField and "done" button)
+    notifyListeners();
+  }
+
+  getAllDetails(int index, String page, BuildContext context) async {
+    try {
+      downloading[index] = true;
+      notifyListeners();
+      await getRouteDetails(0, "", context);
+      await getACMasterDetails(0, "");
+      downloading[index] = false;
+      downlooaded[index] = true;
+      notifyListeners();
+    } catch (e) {
+      downloading[index] = false;
+      if (e is SocketException) {
+        CustomSnackbar snak = CustomSnackbar();
+        snak.showSnackbar(context, "SocketException: No route to host", "");
+        print('SocketException: ${e.message}');
+        print('Failed to connect to the server.');
+      } else if (e is ClientException) {
+        CustomSnackbar snak = CustomSnackbar();
+        snak.showSnackbar(context, "${e.toString()}", "");
+        print('ClientException: ${e.message}');
+      } else {
+        CustomSnackbar snak = CustomSnackbar();
+        snak.showSnackbar(context, "${e.toString()}", "");
+        print('Unknown error: $e');
+      }
+      // CustomSnackbar snak = CustomSnackbar();
+      // snak.showSnackbar(context, "${e.toString()}", "");
+      // print('General Exception: $e');
+    }
   }
 
   Future<RouteModel?> getRouteDetails(
@@ -702,13 +847,23 @@ class Controller extends ChangeNotifier {
     notifyListeners();
   }
 
-  setSelectedroute(Map selectedrout) async {
-    selectedrut = selectedrout["routename"];
-    print(selectedrout["rid"].runtimeType);
+  // setSelectedroute(Map selectedrout) async
+  // {
+  //   selectedrut = selectedrout["routename"];
+  //   print(selectedrout["rid"].runtimeType);
+  //   final prefs = await SharedPreferences.getInstance();
+  //   prefs.setInt("sel_rootid", selectedrout["rid"]);
+  //   prefs.setString("sel_rootnm", selectedrout["routename"]);
+  //   print("roottt---$selectedrut");
+  //   notifyListeners();
+  // }
+  setRoute(int routeId) async {
+    // selectedrut = selectedrout["routename"];
+    // print(selectedrout["rid"].runtimeType);
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt("sel_rootid", selectedrout["rid"]);
-    prefs.setString("sel_rootnm", selectedrout["routename"]);
-    print("roottt---$selectedrut");
+    prefs.setInt("sel_rootid", routeId);
+
+    print("cur roottt---$routeId");
     notifyListeners();
   }
 
@@ -727,12 +882,13 @@ class Controller extends ChangeNotifier {
     selectedsuplier = selsupplier["acc_name"];
     print(selsupplier["acid"].runtimeType);
     final prefs = await SharedPreferences.getInstance();
+    prefs.setInt("sel_rootid", selsupplier["route"]);
     prefs.setInt("sel_accid", selsupplier["acid"]);
     prefs.setString("sel_accnm", selsupplier["acc_name"]);
     prefs.setString("sel_acccod", selsupplier["acc_code"]);
     prefs.setString("sel_accplc", selsupplier["acc_ext_place"]);
 
-    print("sel supplier---$selectedsuplier, ${selsupplier["acid"]}");
+    print("sel supplier---${selsupplier["route"]}, ${selsupplier["acc_code"]}");
     notifyListeners();
   }
 
@@ -750,7 +906,7 @@ class Controller extends ChangeNotifier {
         url,
         body: body,
       );
-      
+
       print("body ${body}");
       var map = jsonDecode(response.body);
       print("mapsuppli ${map}");
@@ -820,13 +976,14 @@ class Controller extends ChangeNotifier {
     return filteredlist;
   }
 
-  getSupplierfromDB(int? rid) async {
-    print("root ID...............${rid}");
+  getSupplierfromDB(String? sercod) async {
+    print("ser COD...............${sercod}");
     try {
       filteredlist.clear();
       spplierList.clear();
       notifyListeners();
-      List accList = await TeaDB.instance.getSupplierListfromDB(rid!);
+      List accList =
+          await TeaDB.instance.getSupplierListfromDB(sercod.toString());
       print("accList----$accList");
       spplierList.clear();
       notifyListeners();
@@ -1142,6 +1299,78 @@ class Controller extends ChangeNotifier {
     advmod = AdvanceModel.fromJson(advanceMap);
     var adv = await TeaDB.instance.insertAdvancetoDB(advmod);
   }
+
+  // addNewBagRow() {
+  //   TextEditingController newController = TextEditingController();
+  //   controllers.add(newController);
+  //   notifyListeners();
+  //   bagRows.add(
+  //     Padding(
+  //       padding: const EdgeInsets.all(10),
+  //       child: Row(
+  //         children: [
+  //           Text(
+  //             " Bag $currentBagCount  ",
+  //             style: TextStyle(fontSize: 18),
+  //           ),
+  //           SizedBox(
+  //             width: 140,
+  //             height: 55,
+  //             child: TextFormField(
+
+  //               onChanged: (value) {
+  //                 if (value.isNotEmpty &&
+  //                     int.tryParse(value) != null &&
+  //                     int.parse(value) > 0) {
+  //                   onRowchange();
+  //                   notifyListeners();
+  //                 }
+  //               },
+  //               controller: newController,
+  //               keyboardType: TextInputType.number,
+  //               decoration: InputDecoration(
+  //                 border: OutlineInputBorder(),
+  //                 labelText: 'Enter Bag $currentBagCount',
+  //               ),
+  //             ),
+  //           ),
+  //           // ...donRows
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  //   currentBagCount++; // Increment the bag count for the next row
+  //   print("current bagCount---${currentBagCount-1}");
+  //   notifyListeners();
+  // }
+
+  // addNewDoneRow() {
+
+  //   donRows.add(
+  //     Row(
+  //       children: [
+  //         IconButton(
+  //           // Disable the button if the condition is not met
+  //           icon: Icon(Icons.done, color: Colors.green),
+  //           onPressed: () {
+  //             onDonePressed();
+  //           },
+  //         )
+  //       ],
+  //     ),
+  //   );
+  //   notifyListeners();
+  // }
+
+  // onRowchange() async {
+  //   await addNewDoneRow();
+  // }
+
+  // void onDonePressed() async {
+  //    donRows.clear();
+  //    notifyListeners();
+  //   await addNewBagRow();
+  // }
 
   searchSupplier(String val) {
     filteredlist = spplierList;
