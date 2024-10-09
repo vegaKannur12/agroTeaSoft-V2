@@ -103,6 +103,8 @@ class Controller extends ChangeNotifier {
   List<Widget> bagRows = [];
   List<Widget> donRows = [];
   List<TextEditingController> controllers = [];
+  double totalwgt = 0.0;
+  int totalBagCount = 0;
   // List<Map<TextEditingController, bool>> controllers = [];
   // List<bool> isDoneEnabled = [];
   List<ValueNotifier<bool>> isDoneEnabled = [];
@@ -125,6 +127,7 @@ class Controller extends ChangeNotifier {
     ValueNotifier<bool> doneNotifier = ValueNotifier(false);
     isDoneEnabled.add(doneNotifier);
     bool isRowCompleted = false;
+    totalBagCount=0;
     notifyListeners();
     bagRows.add(
       Padding(
@@ -147,6 +150,7 @@ class Controller extends ChangeNotifier {
                     if (!isRowCompleted) {
                       print("-------------val>0");
                       doneNotifier.value = true;
+                      await calculateTotalWeight();
                       // await setIsDoneEnable(true, newController);
                       notifyListeners();
                     }
@@ -201,7 +205,21 @@ class Controller extends ChangeNotifier {
 
     // Refresh the UI to display the new row
     currentBagCount++; // Increment the bag count for the next row
+    totalBagCount=currentBagCount-1;
     notifyListeners();
+    print("total bag count=${totalBagCount}");
+    notifyListeners();
+  }
+
+  calculateTotalWeight() {
+    totalwgt = 0.0;
+    for (var controller in controllers) {
+      double? value = double.tryParse(controller.text.toString().trim());
+      if (value != null) {
+        totalwgt += value;
+      }
+    }
+    notifyListeners(); // Notify listeners to update the UI if needed
   }
 
   // setIsDoneEnable(bool val, TextEditingController newController) {
