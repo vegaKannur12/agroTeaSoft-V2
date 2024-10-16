@@ -26,16 +26,25 @@ class _DamageNRemarkState extends State<DamageNRemark> {
   double summ = 0;
   TextEditingController total_ctrl = TextEditingController();
   TextEditingController damge_ctrl = TextEditingController();
+  TextEditingController moist_ctrl = TextEditingController();
+  TextEditingController others_ctrl = TextEditingController();
   TextEditingController nettot_ctrl = TextEditingController();
   TextEditingController remark_ctrl = TextEditingController();
+  double moistInkg = 0.0;
+  double othersInkg = 0.0;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<Controller>(context, listen: false).geTseries();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<Controller>(context, listen: false).geTseries();
+
+      Provider.of<Controller>(context, listen: false)
+          .setTotalAfterDeduction(widget.totalweight!, "init");
+    });
     displaydate = DateFormat('dd-MM-yyyy').format(date);
-    total_ctrl.text = widget.totalweight.toString();
-    nettot_ctrl.text = widget.totalweight.toString();
+    total_ctrl.text = "${widget.totalweight.toString()} Kg";
+    nettot_ctrl.text = "${widget.totalweight.toString()} Kg";
     print(("-----$displaydate"));
   }
 
@@ -135,7 +144,7 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                       border: InputBorder.none, hintText: ""),
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
@@ -156,7 +165,8 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                     damge_ctrl,
                                     1,
                                     TextInputType.number,
-                                    (String input) => nettotCalulate()))
+                                    (String input) => nettotCalulate())),
+                            Text("  Kg")
                           ],
                         ),
                       ),
@@ -192,7 +202,7 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                           ],
                         ),
                       ),
-                       Padding(
+                      Padding(
                         padding: EdgeInsets.only(left: 10, right: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -202,34 +212,81 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 // color: Colors.yellow,
                                 width: size.width * 1 / 3.5,
                                 child: Text("MOISTURE")),
+                            Row(
+                              children: [
+                                Text(" in ",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 18)),
+                                SizedBox(
+                                  width: 75,
+                                  height: 80,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 15, left: 12, right: 12),
+                                    child: DropdownButton<Map<String, dynamic>>(
+                                      isExpanded: true,
+                                      underline: SizedBox(),
+                                      hint: Text(""),
+                                      value: value.selectedwgtMoist,
+                                      onChanged: (Map<String, dynamic>?
+                                          newValue) async {
+                                        setState(() {
+                                          moist_ctrl.clear();
+                                          moistInkg = 0.0;
+                                          value.selectedwgtMoist = newValue;
+                                          print(
+                                              "selected moist---${value.selectedwgtMoist}");
+                                        });
+                                        // await Provider.of<Controller>(context, listen: false)
+                                        //     .setSelectedroute(selectedRoute!);
+                                      },
+                                      items: value.perKgList.map<
+                                              DropdownMenuItem<
+                                                  Map<String, dynamic>>>(
+                                          (Map<String, dynamic> pk) {
+                                        return DropdownMenuItem<
+                                            Map<String, dynamic>>(
+                                          value: pk,
+                                          child: Text(
+                                            pk['type'].toString().toUpperCase(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(
-                              width: 140,
+                              width: 100,
                               height: 55,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: DropdownButton<Map<String, dynamic>>(
-                          hint: Text("Select Route"),
-                          value: value.selectedwgt,
-                          onChanged: (Map<String, dynamic>? newValue) async {
-                            setState(() {
-                              value.selectedwgt = newValue;
-                              print("selected root---${value.selectedwgt}");
-                            });
-                            // await Provider.of<Controller>(context, listen: false)
-                            //     .setSelectedroute(selectedRoute!);
-                          },
-                          items: value.perKgList
-                              .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                  (Map<String, dynamic> pk) {
-                            return DropdownMenuItem<Map<String, dynamic>>(
-                              value: pk,
-                              child: Text(pk['type']),
-                            );
-                          }).toList(),
-                        ),
+                              child: TextFormField(
+                                // readOnly: true,
+                                controller: moist_ctrl,
+                                onFieldSubmitted: (valu) => value
+                                            .selectedwgtMoist!["type"] ==
+                                        "KG"
+                                    ? convertToKG(
+                                        moist_ctrl.text.toString().trim(),
+                                        "moist",
+                                        "kg")
+                                    // deductionCalulate(
+                                    //     double.parse(
+                                    //         moist_ctrl.text.toString().trim()),
+                                    //     "moist")
+                                    : convertToKG(
+                                        moist_ctrl.text.toString().trim(),
+                                        "moist",
+                                        "per"),
                               ),
                             ),
-
+                            value.selectedwgtMoist!["type"] == "%" &&
+                                    moistInkg > 0.0
+                                ? Text("  ${moistInkg.toStringAsFixed(1)} Kg")
+                                : const Text("")
                             // SizedBox(
                             //     height: 60,
                             //     width: 60,
@@ -238,7 +295,94 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                           ],
                         ),
                       ),
-                    
+                      Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                // color: Colors.yellow,
+                                width: size.width * 1 / 3.5,
+                                child: Text("OTHERS")),
+                            Row(
+                              children: [
+                                Text(" in ",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 18)),
+                                SizedBox(
+                                  width: 75,
+                                  height: 80,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 15, left: 10, right: 10),
+                                    child: DropdownButton<Map<String, dynamic>>(
+                                      isExpanded: true,
+                                      underline: SizedBox(),
+                                      hint: Text(""),
+                                      value: value.selectedwgtOthers,
+                                      onChanged: (Map<String, dynamic>?
+                                          newValue) async {
+                                        setState(() {
+                                          others_ctrl.clear();
+                                          othersInkg = 0.0;
+                                          value.selectedwgtOthers = newValue;
+                                          print(
+                                              "selected others---${value.selectedwgtOthers}");
+                                        });
+                                        // await Provider.of<Controller>(context, listen: false)
+                                        //     .setSelectedroute(selectedRoute!);
+                                      },
+                                      items: value.perKgList.map<
+                                              DropdownMenuItem<
+                                                  Map<String, dynamic>>>(
+                                          (Map<String, dynamic> pk) {
+                                        return DropdownMenuItem<
+                                            Map<String, dynamic>>(
+                                          value: pk,
+                                          child: Text(
+                                            pk['type'].toString().toUpperCase(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 100,
+                              height: 55,
+                              child: TextFormField(
+                                  // readOnly: true,
+                                  controller: others_ctrl,
+                                  onFieldSubmitted: (valu) => value
+                                              .selectedwgtOthers!["type"] ==
+                                          "KG"
+                                      ? convertToKG(
+                                          others_ctrl.text.toString().trim(),
+                                          "other",
+                                          "kg")
+                                      //  deductionCalulate(
+                                      //     double.parse(others_ctrl.text
+                                      //         .toString()
+                                      //         .trim()),
+                                      //     "other")
+                                      : convertToKG(
+                                          others_ctrl.text.toString().trim(),
+                                          "other",
+                                          "per")),
+                            ),
+                            value.selectedwgtMoist!["type"] == "%" &&
+                                    othersInkg > 0.0
+                                ? Text("  ${othersInkg.toStringAsFixed(1)} Kg")
+                                : const Text("")
+                          ],
+                        ),
+                      ),
                       SizedBox(
                         height: size.height * 0.01,
                       ),
@@ -253,10 +397,15 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                                 width: size.width * 1 / 3.5,
                                 child: Text("Remarks")),
                             SizedBox(
-                                height: 70,
-                                width: 200,
-                                child: customTextfield(remark_ctrl, 3,
-                                    TextInputType.text, (String input) {}))
+                              height: 70,
+                              width: 200,
+                              child: customTextfield(
+                                remark_ctrl,
+                                3,
+                                TextInputType.text,
+                                (String input) {},
+                              ),
+                            )
 
                             // SizedBox(
                             //     height: 60,
@@ -270,66 +419,159 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                   ),
                 ),
               )),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(right: 7),
-            child: SizedBox(
-              height: 60,
-              width: 120,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "NEXT",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Icon(Icons.arrow_forward_ios_rounded,
-                        size: 16, color: Colors.white)
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                        opaque: false, // set to false
-                        pageBuilder: (_, __, ___) => ProductAddPage(
-                              total: total_ctrl.text,
-                              damage: damge_ctrl.text.isEmpty ||
-                                      damge_ctrl.text.toString() == ""
-                                  ? "0"
-                                  : damge_ctrl.text,
-                              nettotal: nettot_ctrl.text,
-                              bagcount: widget.bagcount.toString(),
-                              weightString: widget.weightString.toString(),
-                              remarks: remark_ctrl.text.toString().isEmpty ||
-                                      remark_ctrl.text.toString() == ""
-                                  ? ""
-                                  : remark_ctrl.text.toString(),
-                            )),
-                  );
-                },
+      bottomNavigationBar: Consumer<Controller>(
+        builder: (BuildContext context, Controller value, Widget? child) => Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 12, bottom: 15),
+              child: Row(
+                children: [
+                  Text(
+                    "Total : ",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 100, 64),
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${value.totAftrDeduct.toStringAsFixed(2)} Kg",
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(right: 7),
+              child: SizedBox(
+                height: 60,
+                width: 120,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "NEXT",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Icon(Icons.arrow_forward_ios_rounded,
+                          size: 16, color: Colors.white)
+                    ],
+                  ),
+                  onPressed: () {
+                    String trimmedNet =
+                        nettot_ctrl.text.toString().replaceAll(" Kg", "");
+                    String trimmedTot =
+                        total_ctrl.text.toString().replaceAll(" Kg", "");
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                          opaque: false, // set to false
+                          pageBuilder: (_, __, ___) => ProductAddPage(
+                                total: trimmedTot,
+                                bagweight: damge_ctrl.text.isEmpty ||
+                                        damge_ctrl.text.toString() == ""
+                                    ? "0"
+                                    : damge_ctrl.text,
+                                nettotal:
+                                    value.totAftrDeduct.toStringAsFixed(2),
+                                bagcount: widget.bagcount.toString(),
+                                weightString: widget.weightString.toString(),
+                                moisture: moistInkg.toStringAsFixed(2),
+                                others: othersInkg.toStringAsFixed(2),
+                                remarks: remark_ctrl.text.toString().isEmpty ||
+                                        remark_ctrl.text.toString() == ""
+                                    ? ""
+                                    : remark_ctrl.text.toString(),
+                              )),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  nettotCalulate() {
-    double tot = double.tryParse(total_ctrl.text.toString()) ?? 0;
-
-    double dam = double.tryParse(damge_ctrl.text.toString()) ?? 0;
+  nettotCalulate() async {
+    String trimmedTot = total_ctrl.text.toString().replaceAll(" Kg", "");
+    String trimmedDam = damge_ctrl.text.toString().replaceAll(" Kg", "");
+    double tot = double.tryParse(trimmedTot) ?? 0;
+    double dam = double.tryParse(trimmedDam) ?? 0;
     double netTot = tot - dam;
-    nettot_ctrl.text = netTot.toString();
+    nettot_ctrl.text = "${netTot.toString()} Kg";
+    await Provider.of<Controller>(context, listen: false)
+        .setTotalAfterDeduction(netTot, "init");
 
     setState(() {});
     print("Total-Damage==: $tot-$dam = ${nettot_ctrl.text.toString()}");
+  }
+
+  deductionCalulate(double ded, String type) async {
+    if (type == "moist") {
+      print("deduct moist=$ded");
+
+      String trimmedNet = nettot_ctrl.text.toString().replaceAll(" Kg", "");
+      double tot = double.tryParse(trimmedNet) ?? 0;
+      // double dam = double.tryParse(ded.toString()) ?? 0;
+      double netTot = tot - (ded + othersInkg);
+      // nettot_ctrl.text = netTot.toString();
+      await Provider.of<Controller>(context, listen: false)
+          .setTotalAfterDeduction(netTot, "calc");
+      // setState(() {});
+      // print("Total-Deduction Moist==: $tot-$dam = ${netTot.toString()}");
+    } else if (type == "other") {
+      // String trimmedNet = nettot_ctrl.text.toString().replaceAll(" Kg", "");
+      // double tot = double.tryParse(trimmedNet) ?? 0;
+      // double dam = double.tryParse(ded.toString()) ?? 0;
+      // double netTot = tot - dam;
+      // nettot_ctrl.text = netTot.toString();
+      String trimmedNet = nettot_ctrl.text.toString().replaceAll(" Kg", "");
+      double tot = double.tryParse(trimmedNet) ?? 0;
+      // double dam = double.tryParse(ded.toString()) ?? 0;
+      double netTot = tot - (ded + moistInkg);
+      await Provider.of<Controller>(context, listen: false)
+          .setTotalAfterDeduction(netTot, "calc");
+    }
+    setState(() {});
+  }
+
+  convertToKG(String val, String type, String wgttype) {
+    String trimmedNet = nettot_ctrl.text.toString().replaceAll(" Kg", "");
+    double net = double.tryParse(trimmedNet) ?? 0;
+    double per = double.tryParse(val.toString()) ?? 0;
+
+    if (type == "moist") {
+      if (wgttype == "kg") {
+        moistInkg = per;
+      } else {
+        moistInkg = net * (per / 100);
+      }
+
+      deductionCalulate(moistInkg, type);
+      print("% = $per \nNet = $net\n moistin kg =$moistInkg");
+      print("Moist in kg---${moistInkg.toString()}");
+    } else if (type == "other") {
+      if (wgttype == "kg") {
+        othersInkg = per;
+      } else {
+        othersInkg = net * (per / 100);
+      }
+
+      deductionCalulate(othersInkg, type);
+      print("% = $per \nNet = $net\n others in kg =$othersInkg");
+      print("Others in kg---${othersInkg.toString()}");
+    }
+
+    setState(() {});
+    // setState(() {});
   }
 
   TextFormField customTextfield(TextEditingController contr, int? maxline,

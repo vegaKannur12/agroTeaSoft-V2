@@ -105,15 +105,19 @@ class Controller extends ChangeNotifier {
   List<TextEditingController> controllers = [];
   double totalwgt = 0.0;
   int totalBagCount = 0;
+  List<Map<String, dynamic>> wgtarray = [];
+  double totAftrDeduct = 0.0;
   // List<Map<TextEditingController, bool>> controllers = [];
   // List<bool> isDoneEnabled = [];
   List<ValueNotifier<bool>> isDoneEnabled = [];
   int currentBagCount = 1;
   List<Map<String, dynamic>> perKgList = [
-    {"idd": 1, "type": "Percentage"},
+    {"idd": 1, "type": "%"},
     {"idd": 2, "type": "KG"}
   ];
-  Map<String, dynamic>? selectedwgt = {"idd": 1, "type": "Percentage"};
+  Map<String, dynamic>? selectedwgtMoist;
+  Map<String, dynamic>? selectedwgtOthers;
+  String totalWeightString = "";
 
   setdownflag() {
     downlooaded = List.generate(downloadItems.length, (index) => false);
@@ -127,7 +131,7 @@ class Controller extends ChangeNotifier {
     ValueNotifier<bool> doneNotifier = ValueNotifier(false);
     isDoneEnabled.add(doneNotifier);
     bool isRowCompleted = false;
-    totalBagCount=0;
+
     notifyListeners();
     bagRows.add(
       Padding(
@@ -136,7 +140,7 @@ class Controller extends ChangeNotifier {
           children: [
             Text(
               " Bag $currentBagCount  ",
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
             SizedBox(
               width: 140,
@@ -149,11 +153,15 @@ class Controller extends ChangeNotifier {
                       int.parse(valu.toString()) > 0) {
                     if (!isRowCompleted) {
                       print("-------------val>0");
+                      print(
+                          "index..........${controllers.indexOf(newController)}");
                       doneNotifier.value = true;
-                      await calculateTotalWeight();
+                      // await calculateTotalWeight("add", 0.0);
                       // await setIsDoneEnable(true, newController);
                       notifyListeners();
                     }
+                    await getTextFromControllers();
+                    await calculateTotalWeight("add", 0.0);
                   } else {
                     print("-------------val=====0");
                     doneNotifier.value = false;
@@ -171,7 +179,7 @@ class Controller extends ChangeNotifier {
                 controller: newController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   labelText: 'Enter Bag $currentBagCount',
                 ),
               ),
@@ -189,8 +197,16 @@ class Controller extends ChangeNotifier {
                   onPressed: value
                       ? () async {
                           isRowCompleted = true;
+                          wgtarray.add({
+                            "bag": controllers.indexOf(newController) + 1,
+                            "data": [newController.text.toString()]
+                          });
+
+                          totalBagCount =
+                              controllers.indexOf(newController) + 1;
                           await onDonePressed(context);
                           doneNotifier.value = false;
+                          getTextFromControllers();
                           // await setIsDoneEnable(false, newController);
                           notifyListeners();
                         }
@@ -198,6 +214,32 @@ class Controller extends ChangeNotifier {
                 );
               },
             ),
+            ValueListenableBuilder(
+                valueListenable: newController,
+                builder: (context, value, child) {
+                  if (newController.text.toString().isEmpty &&
+                      controllers.indexOf(newController) ==
+                          controllers.length - 1 &&
+                      controllers.indexOf(newController) != 0) {
+                    return IconButton(
+                        onPressed: () async {
+                          print(
+                              "weigt to remove----${newController.text.toString()}");
+                          // double wgttt =
+                          //     double.parse(newController.text.toString());
+                          controllers.remove(newController);
+                          bagRows.removeLast();
+                          getTextFromControllers();
+                          // bagRows.removeAt(controllers.indexOf(newController));
+                          await calculateTotalWeight("add", 0.0);
+                          notifyListeners();
+                          print("close pressed");
+                        },
+                        icon: Icon(color: Colors.red, Icons.close));
+                  } else {
+                    return SizedBox();
+                  }
+                })
           ],
         ),
       ),
@@ -205,20 +247,51 @@ class Controller extends ChangeNotifier {
 
     // Refresh the UI to display the new row
     currentBagCount++; // Increment the bag count for the next row
-    totalBagCount=currentBagCount-1;
     notifyListeners();
-    print("total bag count=${totalBagCount}");
+    print("total bag count=$totalBagCount \n Total weight= $totalwgt");
     notifyListeners();
   }
 
-  calculateTotalWeight() {
-    totalwgt = 0.0;
-    for (var controller in controllers) {
-      double? value = double.tryParse(controller.text.toString().trim());
-      if (value != null) {
-        totalwgt += value;
+  getTextFromControllers() {
+    totalWeightString = "";
+    notifyListeners();
+    for (int i = 0; i < controllers.length; i++) {
+      String text = controllers[i].text;
+      print("Text from controller $i: $text");
+      if (controllers[i].text != "") {
+        if (totalWeightString == "") {
+          totalWeightString = text;
+          notifyListeners();
+        } else {
+          totalWeightString = '$totalWeightString,$text';
+          notifyListeners();
+        }
       }
+
+      print("totalweight string----$totalWeightString");
+
+      // You can perform further operations here with the text value
     }
+  }
+
+  clearTotalweightString() {
+    totalWeightString = "";
+    notifyListeners();
+  }
+
+  calculateTotalWeight(String type, double wgt) {
+    if (type == "add") {
+      totalwgt = 0.0;
+      for (var controller in controllers) {
+        double? value = double.tryParse(controller.text.toString().trim());
+        if (value != null) {
+          totalwgt += value;
+        }
+      }
+    } else {
+      totalwgt - wgt;
+    }
+
     notifyListeners(); // Notify listeners to update the UI if needed
   }
 
@@ -231,8 +304,15 @@ class Controller extends ChangeNotifier {
   // }
 
   onDonePressed(BuildContext context) {
+    print("weigt array---$wgtarray");
     addNewBagRow(
         context); // Add a new bag row (TextFormField and "done" button)
+    notifyListeners();
+  }
+
+  getSelctedTypePercentageORWgt() {
+    selectedwgtMoist = perKgList[0];
+    selectedwgtOthers = perKgList[0];
     notifyListeners();
   }
 
@@ -265,6 +345,18 @@ class Controller extends ChangeNotifier {
       // snak.showSnackbar(context, "${e.toString()}", "");
       // print('General Exception: $e');
     }
+  }
+
+  setTotalAfterDeduction(double dedTot, String from) {
+    // if (from == "init") {
+    totAftrDeduct = dedTot;
+    //   print("Totla on init----$totAftrDeduct");
+    // } else {
+    //   print("Totla aftr deductN----$totAftrDeduct-$dedTot==${totAftrDeduct-dedTot}");
+    //   totAftrDeduct = totAftrDeduct - dedTot;
+    // }
+
+    notifyListeners();
   }
 
   Future<RouteModel?> getRouteDetails(

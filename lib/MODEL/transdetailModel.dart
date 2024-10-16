@@ -1,9 +1,11 @@
 class TransDetailModel {
   String? trans_det_mast_id;
   int? trans_det_prod_id;
-  String? trans_det_col_qty;
-  String? trans_det_dmg_qty;
+  String? trans_det_tot_qty;
+  String? trans_det_bag_wt;
   String? trans_det_net_qty;
+  String? trans_det_net_moisture;
+  String? trans_det_others;
   String? trans_det_unit;
   String? trans_det_rate_id;
   String? trans_det_value;
@@ -18,9 +20,11 @@ class TransDetailModel {
   TransDetailModel(
       {this.trans_det_mast_id,
       this.trans_det_prod_id,
-      this.trans_det_col_qty,
-      this.trans_det_dmg_qty,
+      this.trans_det_tot_qty,
+      this.trans_det_bag_wt,
       this.trans_det_net_qty,
+      this.trans_det_net_moisture,
+      this.trans_det_others,
       this.trans_det_unit,
       this.trans_det_rate_id,
       this.trans_det_value,
@@ -36,9 +40,11 @@ class TransDetailModel {
     return {
       'trans_det_mast_id': trans_det_mast_id,
       'trans_det_prod_id': trans_det_prod_id,
-      'trans_det_col_qty': trans_det_col_qty,
-      'trans_det_dmg_qty': trans_det_dmg_qty,
-      'trans_det_net_qty': trans_det_net_qty,
+      'trans_det_tot_qty': trans_det_tot_qty,
+      'trans_det_bag_wt': trans_det_bag_wt,
+      'trans_det_net_qty': trans_det_net_qty, 
+      'trans_det_net_moisture': trans_det_net_moisture,
+      'trans_det_others': trans_det_others,
       'trans_det_unit': trans_det_unit,
       'trans_det_rate_id': trans_det_rate_id,
       'trans_det_value': trans_det_value,
@@ -57,10 +63,12 @@ class TransDetailModel {
     return TransDetailModel(
       trans_det_mast_id: map['trans_det_mast_id'],
       trans_det_prod_id: map['trans_det_prod_id'],
-      trans_det_col_qty: map['trans_det_col_qty'],
-      trans_det_dmg_qty: map['trans_det_dmg_qty'],
+      trans_det_tot_qty: map['trans_det_tot_qty'],
+      trans_det_bag_wt: map['trans_det_bag_wt'],
       trans_det_net_qty: map['trans_det_net_qty'],
       trans_det_unit: map['trans_det_unit'],
+      trans_det_net_moisture: map['trans_det_net_moisture'],
+      trans_det_others: map['trans_det_net_moisture'],
       trans_det_rate_id: map['trans_det_rate_id'],
       trans_det_value: map['trans_det_value'],
       trans_det_import_id: map['trans_det_import_id'],

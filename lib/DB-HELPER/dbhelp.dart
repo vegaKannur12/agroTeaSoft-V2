@@ -106,9 +106,11 @@ class TeaDB {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             trans_det_mast_id TEXT,
             trans_det_prod_id TEXT,
-            trans_det_col_qty TEXT,
-            trans_det_dmg_qty TEXT,
+            trans_det_tot_qty TEXT,
+            trans_det_bag_wt TEXT,
             trans_det_net_qty TEXT,
+            trans_det_net_moisture TEXT,
+            trans_det_others TEXT,
             trans_det_unit TEXT,
             trans_det_rate_id TEXT,		
             trans_det_value TEXT,		
@@ -195,8 +197,7 @@ class TeaDB {
     return res;
   }
 
-  Future<int> insertTransDetail(TransDetailModel detail) async 
-  {
+  Future<int> insertTransDetail(TransDetailModel detail) async {
     final db = await instance.database;
 
     var res = await db.insert('TransDetailsTable', detail.toMap());
@@ -204,15 +205,15 @@ class TeaDB {
     return res;
   }
 
-  Future inserttransDetails(TransDetailModel ddata) async {
-    final db = await database;
-    var query3 =
-        'INSERT INTO TransDetailsTable(trans_det_mast_id,trans_det_prod_id,trans_det_col_qty ,trans_det_dmg_qty ,trans_det_net_qty,trans_det_unit ,trans_det_import_id ,company_id ,branch_id,log_user_id,user_session,log_date,status) VALUES("${ddata.trans_det_mast_id}", "${ddata.trans_det_prod_id}","${ddata.trans_det_col_qty}","${ddata.trans_det_dmg_qty}","${ddata.trans_det_net_qty}","${ddata.trans_det_unit}","${ddata.trans_det_import_id}","${ddata.company_id}","${ddata.branch_id}","${ddata.log_user_id}","${ddata.user_session}","${ddata.log_date}",${ddata.status})';
-    var res = await db.rawInsert(query3);
-    print(query3);
-    print(res);
-    return res;
-  }
+  // Future inserttransDetails(TransDetailModel ddata) async {
+  //   final db = await database;
+  //   var query3 =
+  //       'INSERT INTO TransDetailsTable(trans_det_mast_id,trans_det_prod_id,trans_det_col_qty ,trans_det_dmg_qty ,trans_det_net_qty,trans_det_unit ,trans_det_import_id ,company_id ,branch_id,log_user_id,user_session,log_date,status) VALUES("${ddata.trans_det_mast_id}", "${ddata.trans_det_prod_id}","${ddata.trans_det_col_qty}","${ddata.trans_det_dmg_qty}","${ddata.trans_det_net_qty}","${ddata.trans_det_unit}","${ddata.trans_det_import_id}","${ddata.company_id}","${ddata.branch_id}","${ddata.log_user_id}","${ddata.user_session}","${ddata.log_date}",${ddata.status})';
+  //   var res = await db.rawInsert(query3);
+  //   print(query3);
+  //   print(res);
+  //   return res;
+  // }
 
   Future insertAdvancetoDB(AdvanceModel adata) async {
     final db = await database;
@@ -230,10 +231,12 @@ class TeaDB {
     list = await db.rawQuery('SELECT rid,routename FROM routeDetailsTable');
     return list;
   }
+
   Future<List<Map<String, dynamic>>> getRouteNamefromDB(int? rid) async {
     List<Map<String, dynamic>> list = [];
     Database db = await instance.database;
-    list = await db.rawQuery('SELECT routename FROM routeDetailsTable WHERE rid=$rid');
+    list = await db
+        .rawQuery('SELECT routename FROM routeDetailsTable WHERE rid=$rid');
     return list;
   }
 
@@ -246,11 +249,14 @@ class TeaDB {
     return list;
   }
 
-  Future<List<Map<String, dynamic>>> getSupplierListfromDB(String? serid) async {
+  Future<List<Map<String, dynamic>>> getSupplierListfromDB(
+      String? serid) async {
     print("rid----> $serid");
     List<Map<String, dynamic>> list = [];
     Database db = await instance.database;
-    if (serid == "" || serid!.isEmpty || serid.toString().toLowerCase()=="null") {
+    if (serid == "" ||
+        serid!.isEmpty ||
+        serid.toString().toLowerCase() == "null") {
       list = await db.rawQuery(
           'SELECT acid,acc_code,acc_name,route,acc_ser_code,acc_ext_place FROM accountMasterTable where acc_master_type="SU"');
     } else {
@@ -300,10 +306,10 @@ class TeaDB {
     Database db = await instance.database;
     if (conditn == "yes") {
       list = await db.rawQuery(
-          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_col_qty, trans_det_dmg_qty,trans_det_net_qty,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable WHERE trans_det_import_id ='0'");
+          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_tot_qty, trans_det_bag_wt,trans_det_net_qty,trans_det_net_moisture,trans_det_others,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable WHERE trans_det_import_id ='0'");
     } else {
       list = await db.rawQuery(
-          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_col_qty, trans_det_dmg_qty,trans_det_net_qty,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable");
+          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_tot_qty, trans_det_bag_wt,trans_det_net_qty,trans_det_net_moisture,trans_det_others,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable");
     }
     return list;
   }

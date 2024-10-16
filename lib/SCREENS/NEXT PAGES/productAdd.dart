@@ -13,16 +13,20 @@ class ProductAddPage extends StatefulWidget {
   final String bagcount;
   final String weightString;
   final String? total;
-  final String? damage;
+  final String? bagweight;
   final String? nettotal;
+  final String? moisture;
+  final String? others;
   final String? remarks;
 
   const ProductAddPage(
       {super.key,
       required this.total,
-      required this.damage,
+      required this.bagweight,
       required this.nettotal,
       required this.weightString,
+      required this.moisture,
+      required this.others,
       required this.bagcount,
       required this.remarks});
 
@@ -229,7 +233,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
                         opaque: false, // set to false
                         pageBuilder: (_, __, ___) => AdvanceAddPage(
                               total: widget.total.toString(),
-                              damage: widget.damage.toString(),
+                               moisture:widget.moisture.toString(),
+                                others: widget.others.toString(),
+                              bagweight: widget.bagweight.toString(),
                               nettotal: widget.nettotal.toString(),
                               bagcount: widget.bagcount.toString(),
                               weightString: widget.weightString.toString(),

@@ -13,18 +13,26 @@ class FinalSavePage extends StatefulWidget {
   final String bagcount;
   final String weightString;
   final String? total;
-  final String? damage;
+  final String? bagweight;
   final String? nettotal;
   final String? remarks;
+  final String? moisture;
+  final String? others;
+  final String? advAmount;
+  final String? advNarration;
 
   const FinalSavePage(
       {super.key,
       required this.total,
-      required this.damage,
+      required this.bagweight,
       required this.nettotal,
       required this.weightString,
       required this.bagcount,
-      required this.remarks});
+      required this.remarks,
+      required this.moisture,
+      required this.others,
+      required this.advAmount,
+      required this.advNarration});
 
   @override
   State<FinalSavePage> createState() => _FinalSavePageState();
@@ -55,8 +63,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
     uname = prefs.getString("uname");
     upwd = prefs.getString("upwd");
     supName = prefs.getString("sel_accnm");
-    supCod = prefs.getString("sel_acccod");   
-    supPlc = prefs.getString("sel_accplc"); 
+    supCod = prefs.getString("sel_acccod");
+    supPlc = prefs.getString("sel_accplc");
     supId = prefs.getInt("sel_accid");
     rutid = prefs.getInt("sel_rootid");
     proName = prefs.getString("sel_pronm");
@@ -175,8 +183,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     Flexible(
                       child: Text(
                         ": ${supCod.toString().toUpperCase()}",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -197,13 +205,15 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     Flexible(
                       child: Text(
                         ": ${supName.toString().toUpperCase()}",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis),
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ),
                   ],
                 ),
-                 SizedBox(
+                SizedBox(
                   height: size.height * 0.02,
                 ),
                 Row(
@@ -220,8 +230,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                       child: Text(
                         // "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
                         ": ${supPlc.toString().toUpperCase()}",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -259,8 +269,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     Flexible(
                       child: Text(
                         ": ${widget.bagcount.toString()}",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -281,8 +291,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     Flexible(
                       child: Text(
                         ": ${widget.weightString.toString()}",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -303,8 +313,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     Flexible(
                       child: Text(
                         ": ${proName.toString().toUpperCase()}",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -325,8 +335,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     Flexible(
                       child: Text(
                         ": ${widget.total.toString()} KG",
-                        style:
-                            TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -345,10 +355,10 @@ class _FinalSavePageState extends State<FinalSavePage> {
                       child: Text("Damage "),
                     ),
                     Flexible(
-                      child: widget.damage.toString() == "0"
+                      child: widget.bagweight.toString() == "0"
                           ? Text(": ----")
                           : Text(
-                              ": ${widget.damage.toString()} KG",
+                              ": ${widget.bagweight.toString()} KG",
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
@@ -358,10 +368,59 @@ class _FinalSavePageState extends State<FinalSavePage> {
                 SizedBox(
                   height: size.height * 0.02,
                 ),
-                Container(margin: EdgeInsets.all(12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: size.width * 0.08,
+                    ),
+                    Container(
+                      width: size.width * 0.3,
+                      child: Text("Moisture "),
+                    ),
+                    Flexible(
+                      child: widget.moisture.toString() == "0"
+                          ? Text(": ----")
+                          : Text(
+                              ": ${widget.moisture.toString()} KG",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: size.width * 0.08,
+                    ),
+                    Container(
+                      width: size.width * 0.3,
+                      child: Text("Others "),
+                    ),
+                    Flexible(
+                      child: widget.others.toString() == "0"
+                          ? Text(": ----")
+                          : Text(
+                              ": ${widget.others.toString()} KG",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                Container(
+                  margin: EdgeInsets.all(12),
                   color: Color.fromARGB(255, 240, 240, 150),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 6,bottom: 8,left: 16),
+                    padding: const EdgeInsets.only(top: 6, bottom: 8, left: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -390,11 +449,94 @@ class _FinalSavePageState extends State<FinalSavePage> {
                 SizedBox(
                   height: 20,
                 ),
+                widget.advAmount!.isNotEmpty
+                    ? Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  "ADVANCE DETAILS",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.height * 0.02,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: size.width * 0.08,
+                              ),
+                              Container(
+                                width: size.width * 0.3,
+                                child: Text("AMOUNT "),
+                              ),
+                              Flexible(
+                                child: Text(
+                                  ": ${widget.advAmount.toString()} ",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.height * 0.02,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: size.width * 0.08,
+                              ),
+                              Container(
+                                width: size.width * 0.3,
+                                child: Text("NARRATION "),
+                              ),
+                              Flexible(
+                                child: Text(
+                                  ": ${widget.advNarration.toString().isEmpty || widget.advNarration.toString() == "" ? "---" : widget.advNarration.toString()} ",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              "-------- NO ADVANCE COLLECTED --------",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                SizedBox(
+                  height: size.height * 0.03,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(height: 60,
-                  width: 120,
+                    SizedBox(
+                      height: 60,
+                      width: 120,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -417,15 +559,17 @@ class _FinalSavePageState extends State<FinalSavePage> {
                           int? supId = prefs.getInt("sel_accid");
                           String? supName = prefs.getString("sel_accnm");
                           String? ts = prefs.getString("t_series");
-                                  
+
                           print(
                               "supl id : $supId , supName : $supName , tseris : $ts");
-                                  
+
                           value.transMasterMap["trans_id"] = max;
                           value.transMasterMap["trans_series"] = ts;
                           value.transMasterMap["trans_date"] = transactDate;
-                          value.transMasterMap["trans_route_id"] = rutid.toString();
-                          value.transMasterMap["trans_party_id"] = supId.toString();
+                          value.transMasterMap["trans_route_id"] =
+                              rutid.toString();
+                          value.transMasterMap["trans_party_id"] =
+                              supId.toString();
                           value.transMasterMap["trans_party_name"] = supName;
                           value.transMasterMap["trans_remark"] =
                               widget.remarks.toString();
@@ -441,26 +585,32 @@ class _FinalSavePageState extends State<FinalSavePage> {
                           value.transMasterMap["log_user_id"] = u_id.toString();
                           value.transMasterMap["hidden_status"] = "0";
                           value.transMasterMap["row_id"] = "0";
-                          value.transMasterMap["log_user_name"] = uname.toString();
+                          value.transMasterMap["log_user_name"] =
+                              uname.toString();
                           value.transMasterMap["log_date"] = date.toString();
                           value.transMasterMap["status"] = 0;
-                                  
+
                           Map<String, dynamic> transDetailstempMap = {};
                           int? pid = prefs.getInt("sel_proid");
                           String? product = prefs.getString("sel_pronm");
                           String collected = widget.total.toString();
-                                  
-                          String damage = widget.damage.toString();
+
+                          String bagweight = widget.bagweight.toString();
+                          String moisture = widget.moisture.toString();
+                          String others = widget.others.toString();
                           String total = widget.nettotal.toString();
                           print("pid---$pid");
                           print("pName---$product");
                           print(
-                              "Coll----damg----totl---$collected---$damage---$total");
+                              "Coll----damg----totl---$collected---$bagweight---$total");
                           transDetailstempMap["trans_det_mast_id"] = "$ts$max";
                           transDetailstempMap["trans_det_prod_id"] = pid;
-                          transDetailstempMap["trans_det_col_qty"] = collected;
-                          transDetailstempMap["trans_det_dmg_qty"] = damage;
+                          transDetailstempMap["trans_det_tot_qty"] = collected;
+                          transDetailstempMap["trans_det_bag_wt"] = bagweight;
                           transDetailstempMap["trans_det_net_qty"] = total;
+                          transDetailstempMap["trans_det_net_moisture"] =
+                              moisture;
+                          transDetailstempMap["trans_det_others"] = others;
                           transDetailstempMap["trans_det_unit"] = "KG";
                           transDetailstempMap["trans_det_rate_id"] = "0";
                           transDetailstempMap["trans_det_value"] = "0";
@@ -472,17 +622,20 @@ class _FinalSavePageState extends State<FinalSavePage> {
                           transDetailstempMap["log_date"] = date.toString();
                           transDetailstempMap["status"] = 0;
                           // Create a ProductData object and add it to the list
-                                  
-                          print("transdetails Map -------${transDetailstempMap}");
-                          value.transdetailsList.add(transDetailstempMap);                 
+
+                          print(
+                              "transdetails Map -------${transDetailstempMap}");
+                          value.transdetailsList.add(transDetailstempMap);
                           await Provider.of<Controller>(context, listen: false)
                               .insertTransDetailstoDB(value.transdetailsList);
                           print("transdetails List-${value.transdetailsList}");
                           await Provider.of<Controller>(context, listen: false)
                               .insertTransMastertoDB(value.transMasterMap);
-                          value.transMasterMap["details"] = value.transdetailsList;
+                          value.transMasterMap["details"] =
+                              value.transdetailsList;
                           print("transMaster Map-${value.transMasterMap}");
                           value.transdetailsList.clear();
+
                           Fluttertoast.showToast(
                               backgroundColor: Colors.green,
                               msg: "Collection Added",
@@ -491,8 +644,70 @@ class _FinalSavePageState extends State<FinalSavePage> {
                               timeInSecForIosWeb: 1,
                               textColor: Colors.black,
                               fontSize: 16.0);
+
+                          if (widget.advAmount!.isNotEmpty) {
+                            ///save advance
+                            int max = await TeaDB.instance.getMaxCommonQuery(
+                                'AdvanceTable', 'trans_id', " ");
+                            print("int max---- $max");
+
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.setString("log_date", date.toString());
+                            int? rutid = prefs.getInt("sel_rootid");
+                            int? supId = prefs.getInt("sel_accid");
+                            String? supName = prefs.getString("sel_accnm");
+                            String? ts = prefs.getString("t_series");
+                            print(
+                                "supl id: $supId , supName: $supName , tseris: $ts");
+
+                            value.advanceMasterMap["trans_id"] = max;
+                            value.advanceMasterMap["adv_series"] = ts;
+                            value.advanceMasterMap["adv_date"] =
+                                date.toString();
+
+                            // transactDate;
+                            value.advanceMasterMap["adv_route_id"] =
+                                rutid.toString();
+                            value.advanceMasterMap["adv_party_id"] =
+                                supId.toString();
+                            value.advanceMasterMap["adv_party_name"] =
+                                supName.toString();
+                            value.advanceMasterMap["adv_pay_mode"] = "1";
+                            value.advanceMasterMap["adv_pay_acc"] = "";
+                            value.advanceMasterMap["adv_amt"] =
+                                widget.advAmount.toString();
+                            value.advanceMasterMap["adv_narration"] =
+                                widget.advNarration.toString();
+                            value.advanceMasterMap["adv_acc_date"] =
+                                transactDate.toString();
+                            // "25,21,65,985";
+                            value.advanceMasterMap["adv_import_id"] = "0";
+                            value.advanceMasterMap["company_id"] =
+                                c_id.toString();
+                            value.advanceMasterMap["branch_id"] =
+                                br_id.toString();
+                            value.advanceMasterMap["log_date"] =
+                                date.toString();
+                            value.advanceMasterMap["status"] = 0;
+
+                            await Provider.of<Controller>(context,
+                                    listen: false)
+                                .insertAdvancetoDB(value.advanceMasterMap);
+                            print(
+                                "advanceMasterMap---> ${value.advanceMasterMap}");
+                            Fluttertoast.showToast(
+                                backgroundColor: Colors.green,
+                                msg: "Advance Added",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                textColor: Colors.black,
+                                fontSize: 16.0);
+                          }
                           await Provider.of<Controller>(context, listen: false)
                               .clearAllAfterSave();
+                          await Provider.of<Controller>(context, listen: false)
+                              .getSupplierfromDB("");
                           Navigator.of(context).push(
                             PageRouteBuilder(
                                 opaque: false, // set to false
@@ -501,8 +716,9 @@ class _FinalSavePageState extends State<FinalSavePage> {
                         },
                       ),
                     ),
-                    SizedBox(height: 60,
-                  width: 120,
+                    SizedBox(
+                      height: 60,
+                      width: 120,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -535,7 +751,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
                                       await Provider.of<Controller>(context,
                                               listen: false)
                                           .clearAllAfterSave();
-                                  
+
                                       Navigator.of(context).push(
                                         PageRouteBuilder(
                                             opaque: false, // set to false

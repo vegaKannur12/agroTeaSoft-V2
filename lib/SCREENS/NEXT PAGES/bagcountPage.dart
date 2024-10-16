@@ -28,6 +28,7 @@ class _BagCountPageState extends State<BagCountPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<Controller>(context, listen: false).clearTotalweightString();
       Provider.of<Controller>(context, listen: false).addNewBagRow(context);
       Provider.of<Controller>(context, listen: false).geTseries();
     });
@@ -219,18 +220,21 @@ class _BagCountPageState extends State<BagCountPage> {
                           size: 16, color: Colors.white)
                     ],
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    await Provider.of<Controller>(context, listen: false)
+                        .getSelctedTypePercentageORWgt();
                     print("count-----${value.totalBagCount.toString()}");
-                    //  Navigator.of(context).push(
-                    //     PageRouteBuilder(
-                    //       opaque: false, // set to false
-                    //       pageBuilder: (_, __, ___) => DamageNRemark(
-                    //         totalweight: double.parse(summ.toString()),
-                    //         weightString: weightString.toString(),
-                    //         bagcount: widget.bagcount.toString(),
-                    //       ),
-                    //     ),
-                    //   );
+                    print("wegt-----${value.totalwgt.toString()}");
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        opaque: false, // set to false
+                        pageBuilder: (_, __, ___) => DamageNRemark(
+                          totalweight: double.parse(value.totalwgt.toString()),
+                          weightString: value.totalWeightString.toString(),
+                          bagcount: value.totalBagCount.toString(),
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
