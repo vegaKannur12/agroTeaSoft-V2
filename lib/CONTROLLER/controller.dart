@@ -110,6 +110,7 @@ class Controller extends ChangeNotifier {
   // List<Map<TextEditingController, bool>> controllers = [];
   // List<bool> isDoneEnabled = [];
   List<ValueNotifier<bool>> isDoneEnabled = [];
+  List<ValueNotifier<bool>> isreadonly = [];
   int currentBagCount = 1;
   List<Map<String, dynamic>> perKgList = [
     {"idd": 1, "type": "%"},
@@ -118,6 +119,8 @@ class Controller extends ChangeNotifier {
   Map<String, dynamic>? selectedwgtMoist;
   Map<String, dynamic>? selectedwgtOthers;
   String totalWeightString = "";
+  List<Widget> bagListShowWidgets = [];
+  // bool readonleFlag = false;
 
   setdownflag() {
     downlooaded = List.generate(downloadItems.length, (index) => false);
@@ -129,8 +132,10 @@ class Controller extends ChangeNotifier {
     TextEditingController newController = TextEditingController();
     controllers.add(newController);
     ValueNotifier<bool> doneNotifier = ValueNotifier(false);
+    ValueNotifier<bool> readonleFlag = ValueNotifier(false);
     isDoneEnabled.add(doneNotifier);
     bool isRowCompleted = false;
+    bool islongPressed = false;
 
     notifyListeners();
     bagRows.add(
@@ -145,42 +150,72 @@ class Controller extends ChangeNotifier {
             SizedBox(
               width: 140,
               height: 55,
-              child: TextFormField(
-                onChanged: (valu) async {
-                  // When the input is valid, enable the "done" button
-                  if (valu.toString().isNotEmpty &&
-                      int.tryParse(valu.toString()) != null &&
-                      int.parse(valu.toString()) > 0) {
-                    if (!isRowCompleted) {
-                      print("-------------val>0");
-                      print(
-                          "index..........${controllers.indexOf(newController)}");
-                      doneNotifier.value = true;
-                      // await calculateTotalWeight("add", 0.0);
-                      // await setIsDoneEnable(true, newController);
+              child: ValueListenableBuilder<bool>(
+                valueListenable: readonleFlag,
+                builder: (BuildContext context, value, Widget? child) =>
+                    InkWell(
+                  onLongPress: () {
+                    if (readonleFlag.value == true) {
+                      islongPressed = true;
+                      readonleFlag.value = false;
                       notifyListeners();
+                      print("readonly flag----${readonleFlag.value}\n long press----$islongPressed");
                     }
-                    await getTextFromControllers();
-                    await calculateTotalWeight("add", 0.0);
-                  } else {
-                    print("-------------val=====0");
-                    doneNotifier.value = false;
-                    if (valu.toString().isNotEmpty &&
-                        int.tryParse(valu.toString()) != null &&
-                        int.parse(valu.toString()) < 0) {
-                      CustomSnackbar snackbar = CustomSnackbar();
-                      snackbar.showSnackbar(
-                          context, "Weight must be greater than zero", "");
-                    }
-                    // await setIsDoneEnable(false, newController);
-                    notifyListeners();
-                  }
-                },
-                controller: newController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: 'Enter Bag $currentBagCount',
+                    print("redonly fals----1");
+                  },
+                  child: IgnorePointer(
+                    ignoring: readonleFlag.value,
+                    child: TextFormField(
+                      readOnly: readonleFlag.value,
+                      onChanged: (valu) async {
+                        // When the input is valid, enable the "done" button
+                        if (valu.toString().isNotEmpty &&
+                            int.tryParse(valu.toString()) != null &&
+                            int.parse(valu.toString()) > 0) {
+                          int no = int.parse(valu.toString().trim());
+                          if (!isRowCompleted) {
+                            print("-------------val>0");
+                            print(
+                                "index..........${controllers.indexOf(newController)}");
+                            await getTextFromControllers();
+                            await calculateTotalWeight("add", 0.0);
+                            doneNotifier.value = true;
+                            // await calculateTotalWeight("add", 0.0);
+                            // await setIsDoneEnable(true, newController);
+                            notifyListeners();
+                          } else if (isRowCompleted &&
+                              readonleFlag.value == false && islongPressed == false) {
+                            readonleFlag.value = true;
+                            notifyListeners();
+                            print("redonly tru----1");
+                          } else if (islongPressed = true) {
+                            updateBagData(
+                                controllers.indexOf(newController), no);
+                          }
+                          // await getTextFromControllers();
+                          // await calculateTotalWeight("add", 0.0);
+                        } else {
+                          print("-------------val=====0");
+                          doneNotifier.value = false;
+                          if (valu.toString().isNotEmpty &&
+                              int.tryParse(valu.toString()) != null &&
+                              int.parse(valu.toString()) < 0) {
+                            CustomSnackbar snackbar = CustomSnackbar();
+                            snackbar.showSnackbar(context,
+                                "Weight must be greater than zero", "");
+                          }
+                          // await setIsDoneEnable(false, newController);
+                          notifyListeners();
+                        }
+                      },
+                      controller: newController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        // labelText: 'Enter Bag $currentBagCount',
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -197,11 +232,13 @@ class Controller extends ChangeNotifier {
                   onPressed: value
                       ? () async {
                           isRowCompleted = true;
+                          readonleFlag.value = true;
+                          notifyListeners();
+                          print("redonly tru----2");
                           wgtarray.add({
                             "bag": controllers.indexOf(newController) + 1,
                             "data": [newController.text.toString()]
                           });
-
                           totalBagCount =
                               controllers.indexOf(newController) + 1;
                           await onDonePressed(context);
@@ -249,6 +286,36 @@ class Controller extends ChangeNotifier {
     currentBagCount++; // Increment the bag count for the next row
     notifyListeners();
     print("total bag count=$totalBagCount \n Total weight= $totalwgt");
+    notifyListeners();
+  }
+
+  Future updateBagData(int bagNumber, int newValue) async {
+    for (var bag in wgtarray) {
+      if (bag["bag"] == bagNumber) {
+        // Append the new value to the existing data list for the given bag number
+        bag["data"].add(newValue);
+        break; // Exit loop after updating the correct bag
+      }
+    }
+    print("bagdata updated----$wgtarray");
+    await getTextFromControllers();
+    await calculateTotalWeight("add", 0.0);
+    notifyListeners();
+  }
+
+  getBagWeightASList(String bagweightstring) {
+    bagListShowWidgets.clear();
+    notifyListeners();
+    List<String> bagValues = bagweightstring.split(',');
+
+    for (int i = 0; i < bagValues.length; i++) {
+      bagListShowWidgets.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 8),
+          child: Text('Bag ${i + 1} -  ${bagValues[i]}'),
+        ),
+      );
+    }
     notifyListeners();
   }
 
@@ -453,7 +520,7 @@ class Controller extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? ts = prefs.getString("t_series");
     String? unm = prefs.getString("uname");
-    colluploading = true;
+
     finalSaveList.clear();
     finalSaveMap.clear();
     finalSaveinnerList.clear(); // Clear finalSaveinnerList at the beginning
@@ -461,69 +528,78 @@ class Controller extends ChangeNotifier {
 
     print("Master List: $importtransMasterList");
     print("Details List: $importtransDetailsList");
-
-    for (var i = 0; i < importtransMasterList.length; i++) {
-      // matermap.clear();
-      // if (transfiltered!.isEmpty) {
-      Map<String, dynamic> matermap = {};
+    if (importtransMasterList.isNotEmpty) {
+      colluploading = true;
       notifyListeners();
-      int transid = importtransMasterList[i]["trans_id"];
-      print("Processing trans_id: $transid");
-      String mastrid = "$ts$transid";
-      print("Generated mastrid: $mastrid");
-      matermap = Map.from(importtransMasterList[i]); //hidden_status
-      matermap["trans_id"] = importtransMasterList[i]["trans_id"];
-      matermap["trans_series"] = importtransMasterList[i]["trans_series"];
-      matermap["trans_date"] = importtransMasterList[i]["trans_date"];
-      matermap["trans_route_id"] = importtransMasterList[i]["trans_route_id"];
-      matermap["trans_party_id"] = importtransMasterList[i]["trans_party_id"];
-      matermap["trans_party_name"] =
-          importtransMasterList[i]["trans_party_name"];
-      matermap["trans_remark"] = importtransMasterList[i]["trans_remark"];
-      matermap["trans_bag_nos"] = importtransMasterList[i]["trans_bag_nos"];
-      matermap["trans_bag_weights"] =
-          importtransMasterList[i]["trans_bag_weights"];
-      matermap["trans_import_id"] = importtransMasterList[i]["trans_import_id"];
-      matermap["company_id"] = importtransMasterList[i]["company_id"];
-      matermap["branch_id"] = importtransMasterList[i]["branch_id"];
-      matermap["user_session"] = importtransMasterList[i]["user_session"];
-      matermap["log_user_id"] = importtransMasterList[i]["log_user_id"];
-      matermap["hidden_status"] = "0";
-      matermap["row_id"] = "0";
-      matermap["log_user_name"] = unm;
-      matermap["log_date"] = importtransMasterList[i]["log_date"];
-      matermap["status"] = importtransMasterList[i]["status"];
-      List<Map<String, dynamic>> detailsList = [];
-      for (var j = 0; j < importtransDetailsList.length; j++) {
-        print(
-            "Checking details for mastrid: $mastrid and trans_det_mast_id: ${importtransDetailsList[j]["trans_det_mast_id"]}");
-        // Check if the detail belongs to the current master entry
-        if (importtransDetailsList[j]["trans_det_mast_id"].toString() ==
-            mastrid) {
-          detailsList.add(importtransDetailsList[j]);
-        }
-      }
-
-      // Attach details to the master entry if available
-      if (detailsList.isNotEmpty) {
-        matermap["details"] = detailsList;
-        finalSaveinnerList.add(matermap);
+      for (var i = 0; i < importtransMasterList.length; i++) {
         // matermap.clear();
-        print("Added master with details: $matermap");
-      } else {
-        print("No details found for trans_id: $transid");
+        // if (transfiltered!.isEmpty) {
+        Map<String, dynamic> matermap = {};
+        notifyListeners();
+        int transid = importtransMasterList[i]["trans_id"];
+        print("Processing trans_id: $transid");
+        String mastrid = "$ts$transid";
+        print("Generated mastrid: $mastrid");
+        matermap = Map.from(importtransMasterList[i]); //hidden_status
+        matermap["trans_id"] = importtransMasterList[i]["trans_id"];
+        matermap["trans_series"] = importtransMasterList[i]["trans_series"];
+        matermap["trans_date"] = importtransMasterList[i]["trans_date"];
+        matermap["trans_route_id"] = importtransMasterList[i]["trans_route_id"];
+        matermap["trans_party_id"] = importtransMasterList[i]["trans_party_id"];
+        matermap["trans_party_name"] =
+            importtransMasterList[i]["trans_party_name"];
+        matermap["trans_remark"] = importtransMasterList[i]["trans_remark"];
+        matermap["trans_bag_nos"] = importtransMasterList[i]["trans_bag_nos"];
+        matermap["trans_bag_weights"] =
+            importtransMasterList[i]["trans_bag_weights"];
+        matermap["trans_import_id"] =
+            importtransMasterList[i]["trans_import_id"];
+        matermap["company_id"] = importtransMasterList[i]["company_id"];
+        matermap["branch_id"] = importtransMasterList[i]["branch_id"];
+        matermap["user_session"] = importtransMasterList[i]["user_session"];
+        matermap["log_user_id"] = importtransMasterList[i]["log_user_id"];
+        matermap["hidden_status"] = "0";
+        matermap["row_id"] = "0";
+        matermap["log_user_name"] = unm;
+        matermap["log_date"] = importtransMasterList[i]["log_date"];
+        matermap["status"] = importtransMasterList[i]["status"];
+        List<Map<String, dynamic>> detailsList = [];
+        for (var j = 0; j < importtransDetailsList.length; j++) {
+          print(
+              "Checking details for mastrid: $mastrid and trans_det_mast_id: ${importtransDetailsList[j]["trans_det_mast_id"]}");
+          // Check if the detail belongs to the current master entry
+          if (importtransDetailsList[j]["trans_det_mast_id"].toString() ==
+              mastrid) {
+            detailsList.add(importtransDetailsList[j]);
+          }
+        }
+
+        // Attach details to the master entry if available
+        if (detailsList.isNotEmpty) {
+          matermap["details"] = detailsList;
+          finalSaveinnerList.add(matermap);
+          // matermap.clear();
+          print("Added master with details: $matermap");
+        } else {
+          print("No details found for trans_id: $transid");
+        }
+        notifyListeners();
       }
+      // Prepare final save map and list
+      finalSaveMap['transactions'] = finalSaveinnerList;
+      print("Final MAP: $finalSaveMap"); // API-ready map format
+      finalSaveList.add(finalSaveMap);
+      print("Final LIST: $finalSaveList");
+      print("Final LIST length: ${finalSaveList.length}");
       notifyListeners();
+      // Send data to API
+      finalSaveColltoAPI(finalSaveMap, context); //uncomented in future
+    } else {
+      colluploading = false;
+      notifyListeners();
+      CustomSnackbar snak = CustomSnackbar();
+      snak.showSnackbar(context, "Nothing to Import", "");
     }
-    // Prepare final save map and list
-    finalSaveMap['transactions'] = finalSaveinnerList;
-    print("Final MAP: $finalSaveMap"); // API-ready map format
-    finalSaveList.add(finalSaveMap);
-    print("Final LIST: $finalSaveList");
-    print("Final LIST length: ${finalSaveList.length}");
-    notifyListeners();
-    // Send data to API
-    finalSaveColltoAPI(finalSaveMap, context); //uncomented in future
   }
 
   finalSaveColltoAPI(
@@ -833,41 +909,50 @@ class Controller extends ChangeNotifier {
     String? unm = prefs.getString("uname");
     int? uid = prefs.getInt("u_id");
     String? logdate = prefs.getString("log_date");
-    advuploading = true;
+
     finalAdvanceMap.clear();
     finalAdvanceinnerList.clear();
     notifyListeners();
     print("Advance Master List: $importAdvanceList");
-    for (var i = 0; i < importAdvanceList.length; i++) {
-      Map<String, dynamic> matermap = {};
+    if (importAdvanceList.isNotEmpty) {
+      advuploading = true;
       notifyListeners();
-      matermap["adv_series"] = importAdvanceList[i]["adv_series"];
-      matermap["adv_route_id"] = importAdvanceList[i]["adv_route_id"];
-      matermap["adv_party_id"] = importAdvanceList[i]["adv_party_id"];
-      matermap["trans_id"] = importAdvanceList[i]["trans_id"];
-      matermap["adv_pay_mode"] = importAdvanceList[i]["adv_pay_mode"];
-      matermap["adv_pay_acc"] = importAdvanceList[i]["adv_pay_acc"];
-      matermap["adv_amt"] = importAdvanceList[i]["adv_amt"];
-      matermap["adv_accountable_date"] = importAdvanceList[i]["adv_acc_date"];
-      matermap["adv_voucher_no"] = "";
-      matermap["company_id"] = importAdvanceList[i]["company_id"];
-      matermap["branch_id"] = importAdvanceList[i]["branch_id"];
-      matermap["user_session"] = "";
-      matermap["log_user_id"] = uid.toString();
-      matermap["log_date"] = logdate;
-      matermap["adv_import_id"] = importAdvanceList[i]["adv_import_id"];
-      matermap["log_user_name"] = unm;
-      matermap["hidden_status"] = "0";
-      matermap["row_id"] = "0";
+      for (var i = 0; i < importAdvanceList.length; i++) {
+        Map<String, dynamic> matermap = {};
+        notifyListeners();
+        matermap["adv_series"] = importAdvanceList[i]["adv_series"];
+        matermap["adv_route_id"] = importAdvanceList[i]["adv_route_id"];
+        matermap["adv_party_id"] = importAdvanceList[i]["adv_party_id"];
+        matermap["trans_id"] = importAdvanceList[i]["trans_id"];
+        matermap["adv_pay_mode"] = importAdvanceList[i]["adv_pay_mode"];
+        matermap["adv_pay_acc"] = importAdvanceList[i]["adv_pay_acc"];
+        matermap["adv_amt"] = importAdvanceList[i]["adv_amt"];
+        matermap["adv_accountable_date"] = importAdvanceList[i]["adv_acc_date"];
+        matermap["adv_voucher_no"] = "";
+        matermap["company_id"] = importAdvanceList[i]["company_id"];
+        matermap["branch_id"] = importAdvanceList[i]["branch_id"];
+        matermap["user_session"] = "";
+        matermap["log_user_id"] = uid.toString();
+        matermap["log_date"] = logdate;
+        matermap["adv_import_id"] = importAdvanceList[i]["adv_import_id"];
+        matermap["log_user_name"] = unm;
+        matermap["hidden_status"] = "0";
+        matermap["row_id"] = "0";
 
-      finalAdvanceinnerList.add(matermap);
+        finalAdvanceinnerList.add(matermap);
+      }
+
+      finalAdvanceMap['transactions'] = finalAdvanceinnerList;
+      print("Final ADV MAP: $finalAdvanceMap");
+      notifyListeners();
+
+      finalSaveADVtoAPI(finalAdvanceMap, context);
+    } else {
+      advuploading = false;
+      notifyListeners();
+      CustomSnackbar snak = CustomSnackbar();
+      snak.showSnackbar(context, "Nothing to Import", "");
     }
-
-    finalAdvanceMap['transactions'] = finalAdvanceinnerList;
-    print("Final ADV MAP: $finalAdvanceMap");
-    notifyListeners();
-
-    finalSaveADVtoAPI(finalAdvanceMap, context);
   }
 
   finalSaveADVtoAPI(
@@ -1119,7 +1204,14 @@ class Controller extends ChangeNotifier {
     prefs.remove("sel_accplc");
     selectedSupplierMap = {};
     selectedsuplier = "";
-
+    totalwgt = 0.0;
+    totalBagCount = 0;
+    wgtarray = [];
+    totAftrDeduct = 0.0;
+    totalWeightString = "";
+    bagListShowWidgets.clear();
+    bagRows.clear();
+    currentBagCount = 1;
     notifyListeners();
   }
 

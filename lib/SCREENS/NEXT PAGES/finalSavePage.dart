@@ -114,7 +114,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
           width: size.width,
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
@@ -278,24 +278,21 @@ class _FinalSavePageState extends State<FinalSavePage> {
                 SizedBox(
                   height: size.height * 0.02,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: size.width * 0.08,
-                    ),
-                    Container(
-                      width: size.width * 0.3,
-                      child: Text("Bag Weight "),
-                    ),
-                    Flexible(
-                      child: Text(
-                        ": ${widget.weightString.toString()}",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+                Container(
+                  margin: EdgeInsets.only(left: 20, right: 20),
+                  padding: EdgeInsets.only(top: 8,right: 8),
+                  color: Colors.green[100],
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          ...value.bagListShowWidgets,
+                        ],
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: size.height * 0.02,
@@ -751,6 +748,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
                                       await Provider.of<Controller>(context,
                                               listen: false)
                                           .clearAllAfterSave();
+                                          await Provider.of<Controller>(context, listen: false).getSupplierfromDB("");
 
                                       Navigator.of(context).push(
                                         PageRouteBuilder(
@@ -778,6 +776,43 @@ class _FinalSavePageState extends State<FinalSavePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<bool> _onBackPressed(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: ListBody(
+              children: const <Widget>[
+                Text('Want to exit from this app without saving data?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await Provider.of<Controller>(context, listen: false)
+                    .clearAllAfterSave();
+                    await Provider.of<Controller>(context, listen: false).getSupplierfromDB("");
+                exit(0);
+              },
+            ),
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

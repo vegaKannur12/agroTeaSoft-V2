@@ -179,6 +179,7 @@ class _BagCountPageState extends State<BagCountPage> {
         builder: (BuildContext context, Controller value, Widget? child) => Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            value.totalwgt.toString()!="0.0"?
             Padding(
               padding: const EdgeInsets.only(left: 12, bottom: 12),
               child: Row(
@@ -199,7 +200,7 @@ class _BagCountPageState extends State<BagCountPage> {
                   ),
                 ],
               ),
-            ),
+            ):SizedBox(),
             Padding(
               padding: EdgeInsets.only(right: 12, bottom: 12),
               child: SizedBox(

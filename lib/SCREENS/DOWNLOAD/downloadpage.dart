@@ -140,8 +140,8 @@ class _DownLoadPageState extends State<DownLoadPage> {
                           color: Colors.white),
                       child: ListTile(
                         title: Center(
-                            child: Text(
-                          "Upload Collection ( ${value.importtransMasterList.length} )",
+                            child: Text( "Upload Data",
+                          // "Upload Data ( ${value.importtransMasterList.length} )",
                           style: TextStyle(
                               color: Colors.red, fontWeight: FontWeight.bold),
                         )),
@@ -153,6 +153,10 @@ class _DownLoadPageState extends State<DownLoadPage> {
                                           listen:
                                               false) // import code to be uncommented
                                       .importFinal(context);
+                                       await Provider.of<Controller>(context,
+                                          listen:
+                                              false) // import code to be uncommented
+                                      .importAdvanceFinal(context);
                                 },
                           icon: value.colluploading
                               ? SizedBox(
@@ -176,51 +180,51 @@ class _DownLoadPageState extends State<DownLoadPage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black45),
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.white),
-                      child: ListTile(
-                        title: Center(
-                            child: Text(
-                          "Upload Advance ( ${value.importAdvanceList.length} )",
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        )),
-                        trailing: IconButton(
-                          onPressed: value.advuploading
-                              ? null // Disable the button while downloading
-                              : () async {
-                                  await Provider.of<Controller>(context,
-                                          listen:
-                                              false) // import code to be uncommented
-                                      .importAdvanceFinal(context);
-                                },
-                          icon: value.advuploading
-                              ? SizedBox(
-                                  height: 25,
-                                  width: 25,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.0,
-                                    color: Colors.black,
-                                  ),
-                                )
-                              : value.advuploaded
-                                  ? Icon(
-                                      Icons.done,
-                                      color: Colors.green,
-                                    )
-                                  : Icon(
-                                      Icons.upload,
-                                      color: Colors.red,
-                                    ),
-                        ),
-                      ),
-                    ),
-                  )
+                  // Padding(
+                  //   padding: const EdgeInsets.all(10.0),
+                  //   child: Ink(
+                  //     decoration: BoxDecoration(
+                  //         border: Border.all(color: Colors.black45),
+                  //         borderRadius: BorderRadius.circular(20),
+                  //         color: Colors.white),
+                  //     child: ListTile(
+                  //       title: Center(
+                  //           child: Text(
+                  //         "Upload Advance ( ${value.importAdvanceList.length} )",
+                  //         style: TextStyle(
+                  //             color: Colors.red, fontWeight: FontWeight.bold),
+                  //       )),
+                  //       trailing: IconButton(
+                  //         onPressed: value.advuploading
+                  //             ? null // Disable the button while downloading
+                  //             : () async {
+                  //                 await Provider.of<Controller>(context,
+                  //                         listen:
+                  //                             false) // import code to be uncommented
+                  //                     .importAdvanceFinal(context);
+                  //               },
+                  //         icon: value.advuploading
+                  //             ? SizedBox(
+                  //                 height: 25,
+                  //                 width: 25,
+                  //                 child: CircularProgressIndicator(
+                  //                   strokeWidth: 2.0,
+                  //                   color: Colors.black,
+                  //                 ),
+                  //               )
+                  //             : value.advuploaded
+                  //                 ? Icon(
+                  //                     Icons.done,
+                  //                     color: Colors.green,
+                  //                   )
+                  //                 : Icon(
+                  //                     Icons.upload,
+                  //                     color: Colors.red,
+                  //                   ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // )
                 ],
               ),
             ),

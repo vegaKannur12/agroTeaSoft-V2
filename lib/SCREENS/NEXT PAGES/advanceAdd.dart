@@ -26,7 +26,8 @@ class AdvanceAddPage extends StatefulWidget {
       required this.bagweight,
       required this.nettotal,
       required this.weightString,
-      required this.bagcount,required this.moisture,
+      required this.bagcount,
+      required this.moisture,
       required this.others,
       required this.remarks});
 
@@ -274,6 +275,11 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                     // adv_narratn_ctrl.clear();
                                     // // dateInput.clear();
                                     // savedate = "";
+
+                                    await Provider.of<Controller>(context,
+                                            listen: false)
+                                        .getBagWeightASList(
+                                            widget.weightString.toString());
                                     Navigator.of(context).push(
                                       PageRouteBuilder(
                                         opaque: false, // set to false
@@ -288,9 +294,10 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                               : adv_narratn_ctrl.text
                                                   .toString(),
                                           total: widget.total.toString(),
-                                          bagweight: widget.bagweight.toString(),
-                                           moisture:widget.moisture.toString(),
-                                           others: widget.others.toString(),
+                                          bagweight:
+                                              widget.bagweight.toString(),
+                                          moisture: widget.moisture.toString(),
+                                          others: widget.others.toString(),
                                           nettotal: widget.nettotal.toString(),
                                           bagcount: widget.bagcount.toString(),
                                           weightString:
@@ -319,6 +326,10 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () async {
+                                  await Provider.of<Controller>(context,
+                                          listen: false)
+                                      .getBagWeightASList(
+                                          widget.weightString.toString());
                                   Navigator.of(context).push(
                                     PageRouteBuilder(
                                       opaque: false, // set to false
@@ -329,8 +340,8 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                         total: widget.total.toString(),
                                         bagweight: widget.bagweight.toString(),
                                         nettotal: widget.nettotal.toString(),
-                                         moisture:widget.moisture.toString(),
-                                others: widget.others.toString(),
+                                        moisture: widget.moisture.toString(),
+                                        others: widget.others.toString(),
                                         bagcount: widget.bagcount.toString(),
                                         weightString:
                                             widget.weightString.toString(),
