@@ -280,7 +280,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 20, right: 20),
-                  padding: EdgeInsets.only(top: 8,right: 8),
+                  padding: EdgeInsets.only(top: 8, right: 8),
                   color: Colors.green[100],
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -349,7 +349,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     ),
                     Container(
                       width: size.width * 0.3,
-                      child: Text("Damage "),
+                      child: Text("Bag Weight "),
                     ),
                     Flexible(
                       child: widget.bagweight.toString() == "0"
@@ -376,7 +376,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
                       child: Text("Moisture "),
                     ),
                     Flexible(
-                      child: widget.moisture.toString() == "0"
+                      child: widget.moisture.toString() == "0.00"
                           ? Text(": ----")
                           : Text(
                               ": ${widget.moisture.toString()} KG",
@@ -400,7 +400,7 @@ class _FinalSavePageState extends State<FinalSavePage> {
                       child: Text("Others "),
                     ),
                     Flexible(
-                      child: widget.others.toString() == "0"
+                      child: widget.others.toString() == "0.00"
                           ? Text(": ----")
                           : Text(
                               ": ${widget.others.toString()} KG",
@@ -602,6 +602,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
                               "Coll----damg----totl---$collected---$bagweight---$total");
                           transDetailstempMap["trans_det_mast_id"] = "$ts$max";
                           transDetailstempMap["trans_det_prod_id"] = pid;
+                          transDetailstempMap["trans_det_prod_nm"] =
+                              product.toString();
                           transDetailstempMap["trans_det_tot_qty"] = collected;
                           transDetailstempMap["trans_det_bag_wt"] = bagweight;
                           transDetailstempMap["trans_det_net_qty"] = total;
@@ -702,9 +704,11 @@ class _FinalSavePageState extends State<FinalSavePage> {
                                 fontSize: 16.0);
                           }
                           await Provider.of<Controller>(context, listen: false)
-                              .clearAllAfterSave();
+                              .setStaffLog();
                           await Provider.of<Controller>(context, listen: false)
-                              .getSupplierfromDB("");
+                              .clearAllAfterSave();
+                          // await Provider.of<Controller>(context, listen: false)
+                          //     .getSupplierfromDB(" ");
                           Navigator.of(context).push(
                             PageRouteBuilder(
                                 opaque: false, // set to false
@@ -748,8 +752,9 @@ class _FinalSavePageState extends State<FinalSavePage> {
                                       await Provider.of<Controller>(context,
                                               listen: false)
                                           .clearAllAfterSave();
-                                          await Provider.of<Controller>(context, listen: false).getSupplierfromDB("");
-
+                                      // await Provider.of<Controller>(context,
+                                      //         listen: false)
+                                      //     .getSupplierfromDB("");
                                       Navigator.of(context).push(
                                         PageRouteBuilder(
                                             opaque: false, // set to false
@@ -771,6 +776,9 @@ class _FinalSavePageState extends State<FinalSavePage> {
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 25,
+                )
               ],
             ),
           ),
@@ -800,7 +808,8 @@ class _FinalSavePageState extends State<FinalSavePage> {
               onPressed: () async {
                 await Provider.of<Controller>(context, listen: false)
                     .clearAllAfterSave();
-                    await Provider.of<Controller>(context, listen: false).getSupplierfromDB("");
+                // await Provider.of<Controller>(context, listen: false)
+                //     .getSupplierfromDB("");
                 exit(0);
               },
             ),

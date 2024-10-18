@@ -208,9 +208,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-            padding: EdgeInsets.only(right: 7),
+            padding: EdgeInsets.only(right: 7,bottom: 15),
             child: SizedBox(
-              height: 60,
+              height: 70,
               width: 120,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(

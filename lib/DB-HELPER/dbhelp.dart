@@ -106,6 +106,7 @@ class TeaDB {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             trans_det_mast_id TEXT,
             trans_det_prod_id TEXT,
+            trans_det_prod_nm TEXT,
             trans_det_tot_qty TEXT,
             trans_det_bag_wt TEXT,
             trans_det_net_qty TEXT,
@@ -142,6 +143,16 @@ class TeaDB {
             branch_id TEXT,  
             log_date TEXT,          
             status INTEGER
+          )
+          ''');
+          await db.execute('''
+          CREATE TABLE StaffLOGTable (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,        
+            logstname TEXT,
+            logtime TEXT,
+            logbagCount TEXT,
+            logbagstring TEXT,
+            logremark TEXT
           )
           ''');
   }
@@ -272,7 +283,12 @@ class TeaDB {
     list = await db.rawQuery('SELECT * FROM prodDetailsTable');
     return list;
   }
-
+ getProductNamefromDB(int pid) async {
+    List<Map<String, dynamic>> list = [];
+    Database db = await instance.database;
+    list = await db.rawQuery('SELECT product FROM prodDetailsTable where pid=$pid');
+    return list[0].toString();
+  }
   Future<List<Map<String, dynamic>>> getUserListfromDB() async {
     List<Map<String, dynamic>> list = [];
     Database db = await instance.database;
@@ -306,10 +322,10 @@ class TeaDB {
     Database db = await instance.database;
     if (conditn == "yes") {
       list = await db.rawQuery(
-          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_tot_qty, trans_det_bag_wt,trans_det_net_qty,trans_det_net_moisture,trans_det_others,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable WHERE trans_det_import_id ='0'");
+          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_prod_nm,trans_det_tot_qty, trans_det_bag_wt,trans_det_net_qty,trans_det_net_moisture,trans_det_others,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable WHERE trans_det_import_id ='0'");
     } else {
       list = await db.rawQuery(
-          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_tot_qty, trans_det_bag_wt,trans_det_net_qty,trans_det_net_moisture,trans_det_others,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable");
+          "SELECT trans_det_mast_id,trans_det_prod_id,trans_det_prod_nm,trans_det_tot_qty, trans_det_bag_wt,trans_det_net_qty,trans_det_net_moisture,trans_det_others,trans_det_unit,trans_det_rate_id,trans_det_value,trans_det_import_id,company_id,branch_id,log_user_id,user_session,log_date,status FROM TransDetailsTable");
     }
     return list;
   }
@@ -326,6 +342,16 @@ class TeaDB {
           "SELECT trans_id,adv_series,adv_date,adv_route_id,adv_party_id,adv_party_name,adv_pay_mode,adv_pay_acc,adv_amt,adv_narration,adv_acc_date,adv_import_id,company_id,branch_id,status FROM AdvanceTable");
     }
     return list;
+  }
+////////////////////// staff route details insertion /////////////////////
+  Future insertStaffLogDetails(String stnm,String time,String count,String bagstring,String remark) async {
+    final db = await database;
+    var query3 =
+        'INSERT INTO StaffLOGTable(logstname,logtime,logbagCount,logbagstring,logremark) VALUES("$stnm","$time","$count","$bagstring","$remark")';
+    var res = await db.rawInsert(query3);
+    print(query3);
+    print(res);
+    return res;
   }
 
   upadteCommonQuery(String table, String fields, String condition) async {

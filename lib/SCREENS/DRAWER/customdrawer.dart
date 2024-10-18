@@ -68,8 +68,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           MainHome(),
                     ),
                   );
-                } 
-                else if (index == 1) {
+                } else if (index == 1) {
                   await Provider.of<Controller>(context, listen: false)
                       .gettransMastersfromDB("yes");
                   await Provider.of<Controller>(context, listen: false)
@@ -83,9 +82,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         opaque: false, // set to false
                         pageBuilder: (_, __, ___) => DownLoadPage()),
                   );
-                } 
-                else if (index == 2) 
-                {
+                } else if (index == 2) {
                   await Provider.of<Controller>(context, listen: false)
                       .gettransMastersfromDB("");
                   await Provider.of<Controller>(context, listen: false)
@@ -93,6 +90,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   await Provider.of<Controller>(context,
                           listen: false) // import code to be uncommented
                       .importFinal2(context);
+                  await Provider.of<Controller>(context, listen: false)
+                      .sortTransactionsByDate();
                   Navigator.of(context).push(
                     PageRouteBuilder(
                         opaque: false, // set to false
@@ -107,6 +106,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   await Provider.of<Controller>(context,
                           listen: false) // import code to be uncommented
                       .importAdvanceBag(context);
+                  await Provider.of<Controller>(context, listen: false)
+                      .sortAdvanceByDate();
                   Navigator.of(context).push(
                     PageRouteBuilder(
                         opaque: false, // set to false

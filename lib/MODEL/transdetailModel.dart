@@ -1,6 +1,7 @@
 class TransDetailModel {
   String? trans_det_mast_id;
   int? trans_det_prod_id;
+  String? trans_det_prod_nm;
   String? trans_det_tot_qty;
   String? trans_det_bag_wt;
   String? trans_det_net_qty;
@@ -20,6 +21,7 @@ class TransDetailModel {
   TransDetailModel(
       {this.trans_det_mast_id,
       this.trans_det_prod_id,
+      this.trans_det_prod_nm,
       this.trans_det_tot_qty,
       this.trans_det_bag_wt,
       this.trans_det_net_qty,
@@ -40,6 +42,7 @@ class TransDetailModel {
     return {
       'trans_det_mast_id': trans_det_mast_id,
       'trans_det_prod_id': trans_det_prod_id,
+      'trans_det_prod_nm': trans_det_prod_nm,
       'trans_det_tot_qty': trans_det_tot_qty,
       'trans_det_bag_wt': trans_det_bag_wt,
       'trans_det_net_qty': trans_det_net_qty, 
@@ -63,6 +66,7 @@ class TransDetailModel {
     return TransDetailModel(
       trans_det_mast_id: map['trans_det_mast_id'],
       trans_det_prod_id: map['trans_det_prod_id'],
+      trans_det_prod_nm: map['trans_det_prod_nm'],
       trans_det_tot_qty: map['trans_det_tot_qty'],
       trans_det_bag_wt: map['trans_det_bag_wt'],
       trans_det_net_qty: map['trans_det_net_qty'],

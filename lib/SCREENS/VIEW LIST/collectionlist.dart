@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tsupply/CONTROLLER/controller.dart';
+import 'package:tsupply/DB-HELPER/dbhelp.dart';
 import 'package:tsupply/SCREENS/COLLECTION/collection.dart';
 import 'package:tsupply/SCREENS/DRAWER/customdrawer.dart';
 import 'dart:io';
@@ -50,20 +51,22 @@ class _CollectionListState extends State<CollectionList>
                       itemCount: value.finalBagList[0]["transactions"].length,
                       itemBuilder: ((context, index) {
                         List list = value.finalBagList[0]["transactions"];
-                        print("list---  > $list");
+                        // int pp=int.parse(list[index]["details"][0]["trans_det_prod_id"].toString());
+                        // List pronm =  TeaDB.instance.getProductNamefromDB(pp);
+                        print("list---  > $list---");
                         return Container(
                           color: Color.fromARGB(255, 243, 244, 245),
                           margin: EdgeInsets.all(8),
                           child: ListTile(
                             title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                  "${list[index]["details"][0]["trans_det_mast_id"].toString()}",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                // Text(
+                                //   "${list[index]["details"][0]["trans_det_mast_id"].toString()}",
+                                //   style: TextStyle(
+                                //       fontSize: 20,
+                                //       fontWeight: FontWeight.bold),
+                                // ),
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 5),
@@ -84,7 +87,8 @@ class _CollectionListState extends State<CollectionList>
                                       textAlign: TextAlign.left,
                                       // maxLines: 2,
                                       // "SDFGGGTHHJJJJJJJJSSShjhjhj",
-                                      " : ${list[index]["trans_id"].toString()}",
+                                       " : ${list[index]["details"][0]["trans_det_mast_id"].toString()}",
+                                      // " : ${list[index]["trans_id"].toString()}",
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 15,
@@ -156,7 +160,7 @@ class _CollectionListState extends State<CollectionList>
                                     ),
                                   ]),
                                 ),
-                                Padding(
+                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 5),
                                   child: Row(children: [
@@ -164,7 +168,7 @@ class _CollectionListState extends State<CollectionList>
                                       width: 65,
                                       child: Text(
                                         textAlign: TextAlign.left,
-                                        "Weights",
+                                        "Product",
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 15,
@@ -176,7 +180,37 @@ class _CollectionListState extends State<CollectionList>
                                       textAlign: TextAlign.left,
                                       // maxLines: 2,
                                       // "SDFGGGTHHJJJJJJJJSSShjhjhj",
-                                      " : ${list[index]["trans_bag_weights"].toString()}",
+                                      " : ${list[index]["details"][0]["trans_det_prod_nm"].toString()}",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ]),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Row(children: [
+                                    SizedBox(
+                                      width: 65,
+                                      child: Text(
+                                        textAlign: TextAlign.left,
+                                        "Net Weight",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Text(
+                                      textAlign: TextAlign.left,  " : ${list[index]["details"][0]["trans_det_net_qty"].toString()} KG",
+                                      // maxLines: 2,
+                                      // "SDFGGGTHHJJJJJJJJSSShjhjhj",
+                                      // " : ${list[index]["trans_bag_weights"].toString()}",
+
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 15,

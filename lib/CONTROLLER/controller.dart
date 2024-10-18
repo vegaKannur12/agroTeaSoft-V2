@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sql_conn/sql_conn.dart';
 import 'package:tsupply/COMPONENTS/custom_snackbar.dart';
@@ -159,7 +160,8 @@ class Controller extends ChangeNotifier {
                       islongPressed = true;
                       readonleFlag.value = false;
                       notifyListeners();
-                      print("readonly flag----${readonleFlag.value}\n long press----$islongPressed");
+                      print(
+                          "readonly flag----${readonleFlag.value}\n long press----$islongPressed");
                     }
                     print("redonly fals----1");
                   },
@@ -184,7 +186,8 @@ class Controller extends ChangeNotifier {
                             // await setIsDoneEnable(true, newController);
                             notifyListeners();
                           } else if (isRowCompleted &&
-                              readonleFlag.value == false && islongPressed == false) {
+                              readonleFlag.value == false &&
+                              islongPressed == false) {
                             readonleFlag.value = true;
                             notifyListeners();
                             print("redonly tru----1");
@@ -251,32 +254,32 @@ class Controller extends ChangeNotifier {
                 );
               },
             ),
-            ValueListenableBuilder(
-                valueListenable: newController,
-                builder: (context, value, child) {
-                  if (newController.text.toString().isEmpty &&
-                      controllers.indexOf(newController) ==
-                          controllers.length - 1 &&
-                      controllers.indexOf(newController) != 0) {
-                    return IconButton(
-                        onPressed: () async {
-                          print(
-                              "weigt to remove----${newController.text.toString()}");
-                          // double wgttt =
-                          //     double.parse(newController.text.toString());
-                          controllers.remove(newController);
-                          bagRows.removeLast();
-                          getTextFromControllers();
-                          // bagRows.removeAt(controllers.indexOf(newController));
-                          await calculateTotalWeight("add", 0.0);
-                          notifyListeners();
-                          print("close pressed");
-                        },
-                        icon: Icon(color: Colors.red, Icons.close));
-                  } else {
-                    return SizedBox();
-                  }
-                })
+            // ValueListenableBuilder(
+            //     valueListenable: newController,
+            //     builder: (context, value, child) {
+            //       if (newController.text.toString().isEmpty &&
+            //           controllers.indexOf(newController) ==
+            //               controllers.length - 1 &&
+            //           controllers.indexOf(newController) != 0) {
+            //         return IconButton(
+            //             onPressed: () async {
+            //               print(
+            //                   "weigt to remove----${newController.text.toString()}");
+            //               // double wgttt =
+            //               //     double.parse(newController.text.toString());
+            //               controllers.remove(newController);
+            //               bagRows.removeLast();
+            //               getTextFromControllers();
+            //               // bagRows.removeAt(controllers.indexOf(newController));
+            //               await calculateTotalWeight("add", 0.0);
+            //               notifyListeners();
+            //               print("close pressed");
+            //             },
+            //             icon: Icon(color: Colors.red, Icons.close));
+            //       } else {
+            //         return SizedBox();
+            //       }
+            //     })
           ],
         ),
       ),
@@ -291,9 +294,9 @@ class Controller extends ChangeNotifier {
 
   Future updateBagData(int bagNumber, int newValue) async {
     for (var bag in wgtarray) {
-      if (bag["bag"] == bagNumber) {
+      if (bag["bag"] == bagNumber + 1) {
         // Append the new value to the existing data list for the given bag number
-        bag["data"].add(newValue);
+        bag["data"].add(newValue.toString());
         break; // Exit loop after updating the correct bag
       }
     }
@@ -301,6 +304,47 @@ class Controller extends ChangeNotifier {
     await getTextFromControllers();
     await calculateTotalWeight("add", 0.0);
     notifyListeners();
+  }
+
+  setStaffLog() async {
+    Map<int, int> editCount = {};
+    DateTime date = DateTime.now();
+    String? formattedDate;
+    formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? st_uname = prefs.getString("uname");
+    String remark = "";
+    print("Staff : $st_uname");
+    print("Time : $formattedDate");
+    print("Bag Added : ${wgtarray.length.toString()}");
+
+    for (var bag in wgtarray) {
+      int bagNumber = bag["bag"];
+      List l = bag['data'];
+      int editc = l.length;
+      editCount[bagNumber] = editc;
+      // Print the remark showing how many times the bag has been edited
+      print("Bag $bagNumber edited ${editc} time(s)");
+    }
+    print("\nFinal edit counts: $editCount");
+    editCount.forEach((bagNumber, count) {
+      if (count > 1) {
+        print("Bag $bagNumber edited $count times");
+        if (remark == "") {
+          remark = 'Bag $bagNumber edited $count times';
+        } else {
+          remark = '$remark , Bag $bagNumber edited $count times';
+        }
+      }
+    });
+    print("remark---$remark");
+    if (remark.isNotEmpty && remark != "") {
+      var rote = await TeaDB.instance.insertStaffLogDetails(st_uname.toString(),
+          formattedDate, wgtarray.length.toString(), "", remark);
+      print("inserted LOG to local db ${rote}");
+    } else {
+      print("remark empty");
+    }
   }
 
   getBagWeightASList(String bagweightstring) {
@@ -312,7 +356,7 @@ class Controller extends ChangeNotifier {
       bagListShowWidgets.add(
         Padding(
           padding: const EdgeInsets.only(top: 8, bottom: 8),
-          child: Text('Bag ${i + 1} -  ${bagValues[i]}'),
+          child: Text('Bag ${i + 1} -  ${bagValues[i]} KG',style: TextStyle(fontWeight: FontWeight.bold),),
         ),
       );
     }
@@ -334,9 +378,7 @@ class Controller extends ChangeNotifier {
           notifyListeners();
         }
       }
-
       print("totalweight string----$totalWeightString");
-
       // You can perform further operations here with the text value
     }
   }
@@ -1096,6 +1138,7 @@ class Controller extends ChangeNotifier {
       // // String? br_id1 = prefs.getString("br_id");
       Map body = {'cid': " "};
       downloading[index] = true;
+      notifyListeners();
       // print("compny----${cid}");
       http.Response response = await http.post(
         url,
@@ -1140,6 +1183,8 @@ class Controller extends ChangeNotifier {
       notifyListeners();
       return acnt;
     } catch (e) {
+      downloading[index] = false;
+      notifyListeners();
       print(e);
       return null;
     }
@@ -1212,6 +1257,8 @@ class Controller extends ChangeNotifier {
     bagListShowWidgets.clear();
     bagRows.clear();
     currentBagCount = 1;
+    controllers.clear();
+    spplierList.clear();
     notifyListeners();
   }
 
@@ -1331,6 +1378,42 @@ class Controller extends ChangeNotifier {
       return null;
     }
     notifyListeners();
+  }
+
+  sortTransactionsByDate() {
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    finalBagList[0]["transactions"].sort((a, b) {
+      // Compare the transaction dates
+      String dateA = a["trans_date"];
+      String dateB = b["trans_date"];
+
+      // If today's date matches, bring it to the top
+      if (dateA == today && dateB != today) {
+        return -1; // Date A is today's, so bring it to the top
+      } else if (dateA != today && dateB == today) {
+        return 1; // Date B is today's, so bring it to the top
+      } else {
+        return 0; // Both are either today's or neither is, keep original order
+      }
+    });
+  }
+
+  sortAdvanceByDate() {
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    finalADVBagList[0]["transactions"].sort((a, b) {
+      // Compare the transaction dates
+      String dateA = a["adv_accountable_date"];
+      String dateB = b["adv_accountable_date"];
+
+      // If today's date matches, bring it to the top
+      if (dateA == today && dateB != today) {
+        return -1; // Date A is today's, so bring it to the top
+      } else if (dateA != today && dateB == today) {
+        return 1; // Date B is today's, so bring it to the top
+      } else {
+        return 0; // Both are either today's or neither is, keep original order
+      }
+    });
   }
 
   getAdvanceDetailsfromDB(String? conditn) async {

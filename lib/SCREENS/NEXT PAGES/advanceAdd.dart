@@ -194,14 +194,14 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             SizedBox(
-                              height: 60,
-                              width: 150,
+                              height: 70,
+                              width: 160,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.black,
                                 ),
-                                child: const Text(
-                                  "ADD ADVANCE",
+                                child:  Text(
+                                  "ADD",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () async {
@@ -315,7 +315,7 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                               ),
                             ),
                             SizedBox(
-                              height: 60,
+                              height: 70,
                               width: 150,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(

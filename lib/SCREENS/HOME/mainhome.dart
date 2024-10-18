@@ -34,7 +34,7 @@ class _MainHomeState extends State<MainHome> {
   // DialogRoutee rutdio = DialogRoutee();
   TextEditingController bagno_ctrl = TextEditingController();
   TextEditingController supCode_ctrl = TextEditingController();
-  String? errorText = "gg";
+  String? errorText = "";
   // final TextEditingController _typeAheadController = TextEditingController();
   @override
   void initState() {
@@ -297,7 +297,15 @@ class _MainHomeState extends State<MainHome> {
                                         ChangeNotifierProvider.value(
                                       value: context.read<
                                           Controller>(), // Pass the existing instance
-                                      child: BagCountPage(),
+                                      child: BagCountPage(
+                                        code: value.spplierList[0]["acc_code"]
+                                            .toString(),
+                                        nm: value.spplierList[0]["acc_name"]
+                                            .toString(),
+                                        plc: value.spplierList[0]
+                                                ["acc_ext_place"]
+                                            .toString(),
+                                      ),
                                     ),
                                   ),
                                 );
