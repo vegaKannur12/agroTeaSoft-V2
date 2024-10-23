@@ -324,7 +324,7 @@ class Controller extends ChangeNotifier {
       int editc = l.length;
       editCount[bagNumber] = editc;
       // Print the remark showing how many times the bag has been edited
-      print("Bag $bagNumber edited ${editc} time(s)");
+      print("Bag $bagNumber edited $editc time(s)");
     }
     print("\nFinal edit counts: $editCount");
     editCount.forEach((bagNumber, count) {
@@ -341,22 +341,26 @@ class Controller extends ChangeNotifier {
     if (remark.isNotEmpty && remark != "") {
       var rote = await TeaDB.instance.insertStaffLogDetails(st_uname.toString(),
           formattedDate, wgtarray.length.toString(), "", remark);
-      print("inserted LOG to local db ${rote}");
+      print("inserted LOG to local db $rote");
     } else {
       print("remark empty");
     }
   }
 
   getBagWeightASList(String bagweightstring) {
+    print("bagweightstring-----$bagweightstring");
     bagListShowWidgets.clear();
     notifyListeners();
     List<String> bagValues = bagweightstring.split(',');
-
     for (int i = 0; i < bagValues.length; i++) {
+      print("bag values---$bagValues");
       bagListShowWidgets.add(
         Padding(
           padding: const EdgeInsets.only(top: 8, bottom: 8),
-          child: Text('Bag ${i + 1} -  ${bagValues[i]} KG',style: TextStyle(fontWeight: FontWeight.bold),),
+          child: Text(
+            'Bag ${i + 1} -  ${bagValues[i]} KG',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       );
     }
@@ -443,11 +447,11 @@ class Controller extends ChangeNotifier {
         print('Failed to connect to the server.');
       } else if (e is ClientException) {
         CustomSnackbar snak = CustomSnackbar();
-        snak.showSnackbar(context, "${e.toString()}", "");
+        snak.showSnackbar(context, e.toString(), "");
         print('ClientException: ${e.message}');
       } else {
         CustomSnackbar snak = CustomSnackbar();
-        snak.showSnackbar(context, "${e.toString()}", "");
+        snak.showSnackbar(context, e.toString(), "");
         print('Unknown error: $e');
       }
       // CustomSnackbar snak = CustomSnackbar();
@@ -488,7 +492,7 @@ class Controller extends ChangeNotifier {
         body: body,
       );
 
-      print("body ${body}");
+      print("body $body");
       var map = jsonDecode(response.body);
       print("route Map--> $map");
       if (map != null) {
@@ -504,7 +508,7 @@ class Controller extends ChangeNotifier {
           print("routeeee----${routee.length}");
           routee = RouteModel.fromJson(routee);
           var rote = await TeaDB.instance.insertrouteDetails(routee);
-          print("inserted ${rote}");
+          print("inserted $rote");
         }
         downloading[index] = false;
         downlooaded[index] = true;
@@ -523,11 +527,11 @@ class Controller extends ChangeNotifier {
         print('Failed to connect to the server.');
       } else if (e is ClientException) {
         CustomSnackbar snak = CustomSnackbar();
-        snak.showSnackbar(context, "${e.toString()}", "");
+        snak.showSnackbar(context, e.toString(), "");
         print('ClientException: ${e.message}');
       } else {
         CustomSnackbar snak = CustomSnackbar();
-        snak.showSnackbar(context, "${e.toString()}", "");
+        snak.showSnackbar(context, e.toString(), "");
         print('Unknown error: $e');
       }
       // CustomSnackbar snak = CustomSnackbar();
@@ -655,8 +659,8 @@ class Controller extends ChangeNotifier {
       body: body,
     );
 
-    print("save body ${body}");
-    print("respons det ${response}");
+    print("save body $body");
+    print("respons det $response");
     print("respons type ${response.runtimeType}");
     // String jsonsDataString = response.body.toString(); // toString of Response's body is assigned to jsonDataString
     // var map  = jsonDecode(jsonsDataString);
@@ -1008,7 +1012,7 @@ class Controller extends ChangeNotifier {
       url,
       body: body,
     );
-    print("Advnc save body ${body}");
+    print("Advnc save body $body");
     print("Advnc respons type ${response.runtimeType}");
     Map map = jsonDecode(response.body);
     // Map map = {
@@ -1042,15 +1046,15 @@ class Controller extends ChangeNotifier {
 
   getRoute(String? sid, BuildContext context) async {
     String areaName;
-    print("staff...............${sid}");
+    print("staff...............$sid");
     try {
       List areaList = await TeaDB.instance.getRoutefromDB(sid!);
-      print("areaList----${areaList}");
+      print("areaList----$areaList");
       routeList.clear();
       for (var item in areaList) {
         routeList.add(item);
       }
-      print("added to routeList----${routeList}");
+      print("added to routeList----$routeList");
       notifyListeners();
     }
     // on SocketException catch (e) {
@@ -1145,9 +1149,9 @@ class Controller extends ChangeNotifier {
         body: body,
       );
 
-      print("body ${body}");
+      print("body $body");
       var map = jsonDecode(response.body);
-      print("mapsuppli ${map}");
+      print("mapsuppli $map");
       await TeaDB.instance.deleteFromTableCommonQuery('accountMasterTable', "");
       // List map = [
       //   {
@@ -1176,7 +1180,7 @@ class Controller extends ChangeNotifier {
         print("accdetails----${acnt.length}");
         acnt = AccountMasterModel.fromJson(acnt);
         var acc = await TeaDB.instance.insertACmasterDetails(acnt);
-        print("inserted ${acc}");
+        print("inserted $acc");
       }
       downloading[index] = false;
       downlooaded[index] = true;
@@ -1217,7 +1221,7 @@ class Controller extends ChangeNotifier {
   }
 
   getSupplierfromDB(String? sercod) async {
-    print("ser COD...............${sercod}");
+    print("ser COD...............$sercod");
     try {
       filteredlist.clear();
       spplierList.clear();
@@ -1267,7 +1271,7 @@ class Controller extends ChangeNotifier {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       double sum = 0.0;
       List proList = await TeaDB.instance.getProductListfromDB();
-      print("prodList----${proList}");
+      print("prodList----$proList");
       prodList.clear();
       // prodList = [
       //   {"id": 1, "pid": 1, "product": "Afddgdgdfgfghf"},
@@ -1332,12 +1336,12 @@ class Controller extends ChangeNotifier {
   getUsersfromDB() async {
     try {
       List usrList = await TeaDB.instance.getUserListfromDB();
-      print("userList----${usrList}");
+      print("userList----$usrList");
       userList.clear();
       for (var item in usrList) {
         userList.add(item);
       }
-      print("added to userList----${userList}");
+      print("added to userList----$userList");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -1354,7 +1358,7 @@ class Controller extends ChangeNotifier {
       for (var item in trList) {
         importtransMasterList.add(item);
       }
-      print("added to translist----${importtransMasterList}");
+      print("added to translist----$importtransMasterList");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -1371,7 +1375,7 @@ class Controller extends ChangeNotifier {
       for (var item in dtlList) {
         importtransDetailsList.add(item);
       }
-      print("added to transDETlist----${importtransDetailsList}");
+      print("added to transDETlist----$importtransDetailsList");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -1424,7 +1428,7 @@ class Controller extends ChangeNotifier {
       for (var item in advList) {
         importAdvanceList.add(item);
       }
-      print("added to importAdvanceList----${importAdvanceList}");
+      print("added to importAdvanceList----$importAdvanceList");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -1469,7 +1473,7 @@ class Controller extends ChangeNotifier {
         body: body,
       );
 
-      print("Prod body ${body}");
+      print("Prod body $body");
       var map = jsonDecode(response.body);
       print("Prod Map--> $map");
 
@@ -1485,7 +1489,7 @@ class Controller extends ChangeNotifier {
 
         prod = ProdModel.fromJson(pro);
         var proo = await TeaDB.instance.insertproductDetails(prod);
-        print("inserted ${proo}");
+        print("inserted $proo");
       }
       downloading[index] = false;
       downlooaded[index] = true;
@@ -1537,7 +1541,7 @@ class Controller extends ChangeNotifier {
         url,
         body: body,
       );
-      print("User body ${body}");
+      print("User body $body");
       var map = jsonDecode(response.body);
       print("User Map--> $map");
       if (map != null) {
@@ -1551,7 +1555,7 @@ class Controller extends ChangeNotifier {
           print("userrr----${uss.length}");
           usr = UserModel.fromJson(uss);
           var userr = await TeaDB.instance.insertUserDetails(usr);
-          print("user inserted ${userr}");
+          print("user inserted $userr");
         }
         downloading[index] = false;
         downlooaded[index] = true;

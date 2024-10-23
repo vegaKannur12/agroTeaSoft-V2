@@ -188,7 +188,8 @@ class _MainHomeState extends State<MainHome> {
                                               .toString()
                                               .trim());
 
-                                      if (value.spplierList.isNotEmpty) {
+                                      if (value.spplierList.isNotEmpty) 
+                                      {
                                         errorText = "";
                                         print("suplier found");
                                         print("sup --${value.spplierList}");
