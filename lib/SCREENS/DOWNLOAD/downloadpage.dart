@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tsupply/COMPONENTS/custom_snackbar.dart';
 import 'package:tsupply/CONTROLLER/controller.dart';
 import 'package:tsupply/SCREENS/DRAWER/customdrawer.dart';
 import 'dart:io';
@@ -79,9 +80,7 @@ class _DownLoadPageState extends State<DownLoadPage> {
                                         // }
                                         //  else
                                         if (value.downloadItems[index] ==
-                                            "Route") 
-                                        
-                                        {
+                                            "Route") {
                                           Provider.of<Controller>(context,
                                                   listen: false)
                                               .getRouteDetails(
@@ -140,25 +139,33 @@ class _DownLoadPageState extends State<DownLoadPage> {
                           color: Colors.white),
                       child: ListTile(
                         title: Center(
-                            child: Text( "Upload Data",
+                            child: Text(
+                          "Upload Data",
                           // "Upload Data ( ${value.importtransMasterList.length} )",
                           style: TextStyle(
                               color: Colors.red, fontWeight: FontWeight.bold),
                         )),
                         trailing: IconButton(
-                          onPressed: value.colluploading
+                          onPressed: value.colluploading || value.advuploading
                               ? null // Disable the button while downloading
                               : () async {
-                                  await Provider.of<Controller>(context,
-                                          listen:
-                                              false) // import code to be uncommented
-                                      .importFinal(context);
-                                       await Provider.of<Controller>(context,
-                                          listen:
-                                              false) // import code to be uncommented
-                                      .importAdvanceFinal(context);
+                                  if (value.importtransMasterList.isNotEmpty ||
+                                      value.importAdvanceList.isNotEmpty) {
+                                    await Provider.of<Controller>(context,
+                                            listen:
+                                                false) // import code to be uncommented
+                                        .importFinal(context);
+                                    await Provider.of<Controller>(context,
+                                            listen:
+                                                false) // import code to be uncommented
+                                        .importAdvanceFinal(context);
+                                  } else {
+                                    CustomSnackbar snak = CustomSnackbar();
+                                    snak.showSnackbar(
+                                        context, "Nothing to Import", "");
+                                  }
                                 },
-                          icon: value.colluploading
+                          icon: value.colluploading || value.advuploading
                               ? SizedBox(
                                   height: 25,
                                   width: 25,

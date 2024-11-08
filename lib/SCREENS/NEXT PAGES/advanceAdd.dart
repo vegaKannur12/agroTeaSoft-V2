@@ -49,6 +49,7 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController adv_amt_ctrl = TextEditingController();
   TextEditingController adv_narratn_ctrl = TextEditingController();
+  String? sel_pronm;
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
     Provider.of<Controller>(context, listen: false).geTseries();
     dateInput.text = "";
     getSharedpref();
-
+   
     //    if (Provider.of<Controller>(context, listen: false).prodList.isNotEmpty) {
     //   selectedPro = Provider.of<Controller>(context, listen: false).prodList[0]; // or leave it null
     // }
@@ -68,11 +69,13 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
 
   getSharedpref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    u_id = prefs.getInt("u_id");
+    u_id =  prefs.getInt("u_id");
     c_id = prefs.getInt("c_id");
     br_id = prefs.getInt("br_id");
     uname = prefs.getString("uname");
     upwd = prefs.getString("upwd");
+    sel_pronm = prefs.getString("sel_pronm");
+    
     // ts = prefs.getString("t_series");
   }
 
@@ -207,6 +210,7 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                 onPressed: () async {
                                   if (adv_amt_ctrl.text.isNotEmpty &&
                                       adv_amt_ctrl.text != "") {
+                                         print("product (advance page)===== $sel_pronm");
                                     // int max = await TeaDB.instance
                                     //     .getMaxCommonQuery(
                                     //         'AdvanceTable', 'trans_id', " ");
@@ -326,6 +330,7 @@ class _AdvanceAddPageState extends State<AdvanceAddPage> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () async {
+                                   print("product (advance page)===== $sel_pronm");
                                   await Provider.of<Controller>(context,
                                           listen: false)
                                       .getBagWeightASList(

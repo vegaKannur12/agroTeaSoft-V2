@@ -558,9 +558,10 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                             size: 16, color: Colors.white)
                       ],
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (moist_ctrl.text.isNotEmpty && moistInkg == 0.0 ||
-                          others_ctrl.text.isNotEmpty && othersInkg == 0.0) {
+                          others_ctrl.text.isNotEmpty && othersInkg == 0.0) 
+                        {
                         print("improper calc");
                         CustomSnackbar snak = CustomSnackbar();
                         snak.showSnackbar(
@@ -572,6 +573,8 @@ class _DamageNRemarkState extends State<DamageNRemark> {
                             nettot_ctrl.text.toString().replaceAll(" Kg", "");
                         String trimmedTot =
                             total_ctrl.text.toString().replaceAll(" Kg", "");
+                        await Provider.of<Controller>(context, listen: false)
+                        .getProductsfromDB();
                         Navigator.of(context).push(
                           PageRouteBuilder(
                               opaque: false, // set to false

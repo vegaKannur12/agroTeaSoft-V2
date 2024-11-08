@@ -233,8 +233,8 @@ class _ProductAddPageState extends State<ProductAddPage> {
                         opaque: false, // set to false
                         pageBuilder: (_, __, ___) => AdvanceAddPage(
                               total: widget.total.toString(),
-                               moisture:widget.moisture.toString(),
-                                others: widget.others.toString(),
+                              moisture:widget.moisture.toString(),
+                              others: widget.others.toString(),
                               bagweight: widget.bagweight.toString(),
                               nettotal: widget.nettotal.toString(),
                               bagcount: widget.bagcount.toString(),

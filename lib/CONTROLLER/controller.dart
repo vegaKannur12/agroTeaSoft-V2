@@ -254,32 +254,6 @@ class Controller extends ChangeNotifier {
                 );
               },
             ),
-            // ValueListenableBuilder(
-            //     valueListenable: newController,
-            //     builder: (context, value, child) {
-            //       if (newController.text.toString().isEmpty &&
-            //           controllers.indexOf(newController) ==
-            //               controllers.length - 1 &&
-            //           controllers.indexOf(newController) != 0) {
-            //         return IconButton(
-            //             onPressed: () async {
-            //               print(
-            //                   "weigt to remove----${newController.text.toString()}");
-            //               // double wgttt =
-            //               //     double.parse(newController.text.toString());
-            //               controllers.remove(newController);
-            //               bagRows.removeLast();
-            //               getTextFromControllers();
-            //               // bagRows.removeAt(controllers.indexOf(newController));
-            //               await calculateTotalWeight("add", 0.0);
-            //               notifyListeners();
-            //               print("close pressed");
-            //             },
-            //             icon: Icon(color: Colors.red, Icons.close));
-            //       } else {
-            //         return SizedBox();
-            //       }
-            //     })
           ],
         ),
       ),
@@ -640,11 +614,12 @@ class Controller extends ChangeNotifier {
       notifyListeners();
       // Send data to API
       finalSaveColltoAPI(finalSaveMap, context); //uncomented in future
-    } else {
+    } 
+    else {
       colluploading = false;
       notifyListeners();
-      CustomSnackbar snak = CustomSnackbar();
-      snak.showSnackbar(context, "Nothing to Import", "");
+      // CustomSnackbar snak = CustomSnackbar();
+      // snak.showSnackbar(context, "Nothing to Import", "");
     }
   }
 
@@ -993,11 +968,12 @@ class Controller extends ChangeNotifier {
       notifyListeners();
 
       finalSaveADVtoAPI(finalAdvanceMap, context);
-    } else {
+    } 
+    else {
       advuploading = false;
       notifyListeners();
-      CustomSnackbar snak = CustomSnackbar();
-      snak.showSnackbar(context, "Nothing to Import", "");
+      // CustomSnackbar snak = CustomSnackbar();
+      // snak.showSnackbar(context, "Nothing to Import", "");
     }
   }
 
@@ -1268,11 +1244,11 @@ class Controller extends ChangeNotifier {
 
   getProductsfromDB() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       double sum = 0.0;
       List proList = await TeaDB.instance.getProductListfromDB();
       print("prodList----$proList");
       prodList.clear();
+      notifyListeners();
       // prodList = [
       //   {"id": 1, "pid": 1, "product": "Afddgdgdfgfghf"},
       //   {"id": 2, "pid": 2, "product": "Bnbnbmhmhmhmh"},
@@ -1281,10 +1257,13 @@ class Controller extends ChangeNotifier {
         prodList.add(item);
       }
       selectedPro = prodList[0];
-      prefs.setInt("sel_proid", selectedPro!["pid"]);
+      notifyListeners();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt("sel_proid", prodList[0]["pid"]);
       prefs.setString(
-          "sel_pronm", selectedPro!["product"].toString().trimLeft());
-
+          "sel_pronm", prodList[0]["product"].toString().trimLeft());
+          print('init prod name ---------');
+      notifyListeners();   
       // var lengthh = prodList.length;
       // colected = List.generate(lengthh, (index) => TextEditingController());
       // damage = List.generate(lengthh, (index) => TextEditingController());
@@ -1298,9 +1277,11 @@ class Controller extends ChangeNotifier {
       // }
       // totalcollected = sum;
       // print("totalcollected----${totalcollected.toString()}");
+
       print("added to prodctList----$prodList");
-      notifyListeners();
-    } catch (e) {
+    } 
+    catch (e) 
+    {
       print(e);
       return null;
     }

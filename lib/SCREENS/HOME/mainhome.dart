@@ -82,18 +82,18 @@ class _MainHomeState extends State<MainHome> {
             ),
           ),
           actions: [
-            IconButton(
-              onPressed: () async {
-                List<Map<String, dynamic>> list =
-                    await TeaDB.instance.getListOfTables();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TableList(list: list)),
-                );
-              },
-              icon: Icon(Icons.table_bar),
-            ),
+            // IconButton(
+            //   onPressed: () async {
+            //     List<Map<String, dynamic>> list =
+            //         await TeaDB.instance.getListOfTables();
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => TableList(list: list)),
+            //     );
+            //   },
+            //   icon: Icon(Icons.table_bar),
+            // ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Text(
